@@ -345,6 +345,17 @@ class GameProvider extends ChangeNotifier {
           (letter: guess.word[i], result: guess.results[i]),
       ]);
     }
+    // Fila en curso con las letras escritas (siempre 5 celdas).
+    if (!isGameOver) {
+      final typed = _currentInput.split('');
+      rows.add(<({String letter, LetterResult result})>[
+        for (var i = 0; i < wordLength; i++)
+          (
+            letter: i < typed.length ? typed[i] : '',
+            result: LetterResult.none,
+          ),
+      ]);
+    }
     // Rellenar las filas restantes con celdas vacías.
     while (rows.length < maxAttempts) {
       rows.add(List<({String letter, LetterResult result})>.filled(

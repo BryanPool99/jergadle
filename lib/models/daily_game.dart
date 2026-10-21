@@ -10,6 +10,7 @@ class DailyGame {
   const DailyGame({
     required this.dateKey,
     required this.secretIndex,
+    required this.secretWord,
     this.guesses = const <GameGuess>[],
     this.status = GameStatus.playing,
   });
@@ -19,6 +20,12 @@ class DailyGame {
 
   /// Índice de la palabra secreta dentro del diccionario.
   final int secretIndex;
+
+  /// Palabra secreta (5 letras en mayúsculas).
+  ///
+  /// Se guarda además del índice para que un cambio en el diccionario no
+  /// rompa la partida en curso del usuario.
+  final String secretWord;
 
   /// Intentos ya enviados (evaluados).
   final List<GameGuess> guesses;
@@ -42,6 +49,7 @@ class DailyGame {
       DailyGame(
         dateKey: dateKey,
         secretIndex: secretIndex,
+        secretWord: secretWord,
         guesses: guesses ?? this.guesses,
         status: status ?? this.status,
       );
@@ -49,6 +57,7 @@ class DailyGame {
   Map<String, dynamic> toJson() => <String, dynamic>{
         'dateKey': dateKey,
         'secretIndex': secretIndex,
+        'secretWord': secretWord,
         'guesses': guesses.map((g) => g.toJson()).toList(),
         'status': status.name,
       };
@@ -63,6 +72,7 @@ class DailyGame {
     return DailyGame(
       dateKey: json['dateKey'] as String? ?? '',
       secretIndex: (json['secretIndex'] as num?)?.toInt() ?? 0,
+      secretWord: (json['secretWord'] as String? ?? '').toUpperCase(),
       guesses: (json['guesses'] as List<dynamic>? ?? const <dynamic>[])
           .map((e) => GameGuess.fromJson(e as Map<String, dynamic>))
           .toList(),
