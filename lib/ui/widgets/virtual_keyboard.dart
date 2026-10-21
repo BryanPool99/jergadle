@@ -122,7 +122,7 @@ class VirtualKeyboard extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
             child: Center(
               child: icon == Icons.backspace
-                  ? Icon(icon, color: theme.onBackground, size: 20)
+                  ? Icon(icon, color: theme.onBackground, size: 20, key: key)
                   : Text(
                       label,
                       key: key,

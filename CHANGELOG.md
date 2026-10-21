@@ -36,6 +36,9 @@ el proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 - Las estadisticas solo se contaban al terminar la partida, no en cada intento.
 - El modo practica ya no sobrescribe la partida guardada del dia.
 - El tablero se desbordaba a 320 px de ancho.
+- Las letras escritas ya no se veian en los cuadritos de la fila activa: la
+  casilla mostraba siempre el estado vacio en vez del caracter tipeado.
+- La tecla de borrar (BACKSPACE) no era identificable por los tests.
 
 ## [0.1.0] - 2026-10-21
 
