@@ -54,6 +54,7 @@ class GameProvider extends ChangeNotifier {
   GameStats _stats = GameStats.empty;
   bool _statsRecordedForDay = false;
   bool _inPractice = false;
+  int _invalidAttemptCount = 0;
 
   /// `true` mientras se restaura el estado desde el almacenamiento.
   bool get isLoading => _isLoading;
@@ -119,6 +120,11 @@ class GameProvider extends ChangeNotifier {
   /// `true` si el usuario está jugando en modo práctica (no cuenta para las
   /// estadísticas ni sobrescribe la partida del día).
   bool get isPractice => _inPractice;
+
+  /// Contador de intentos inválidos enviados.
+  ///
+  /// La UI lo escucha para disparar la animación de aviso.
+  int get invalidAttemptCount => _invalidAttemptCount;
 
   /// `true` si la fila activa ya está completa (5 letras).
   bool get canSubmit => _currentInput.length == wordLength;
@@ -254,8 +260,14 @@ class GameProvider extends ChangeNotifier {
   /// Devuelve `true` si el intento fue válido y se evaluó.
   Future<bool> submitGuess() async {
     if (isGameOver) return false;
-    if (!canSubmit) return false;
-    if (!LetterEvaluator.isValidGuess(_currentInput)) return false;
+    if (!canSubmit) {
+      _rejectAttempt();
+      return false;
+    }
+    if (!LetterEvaluator.isValidGuess(_currentInput)) {
+      _rejectAttempt();
+      return false;
+    }
 
     final result = LetterEvaluator.evaluate(
       guess: _currentInput,
@@ -288,10 +300,16 @@ class GameProvider extends ChangeNotifier {
     return true;
   }
 
+  /// Marca un intento como inválido para que la UI pueda avisar (con una
+  /// animación de "sacudida" y un sonido de error).
+  void _rejectAttempt() {
+    _invalidAttemptCount++;
+    notifyListeners();
+  }
+
   /// Actualiza el color del teclado aplicando la prioridad
   /// verde > amarillo > gris.
-  void _applyKeyboardState(GameGuess guess) {
-    for (var i = 0; i < guess.word.length && i < guess.results.length; i++) {
+  void _applyKeyboardState(GameGuess guess) {    for (var i = 0; i < guess.word.length && i < guess.results.length; i++) {
       final letter = guess.word[i];
       final result = guess.results[i];
       final current = _keyboardState[letter];

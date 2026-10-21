@@ -20,6 +20,7 @@ dependencies:
 
   # Persistencia local en dispositivo (no hay backend).
   shared_preferences: ^2.3.3
+  audioplayers: ^6.8.1
 
 dev_dependencies:
   flutter_test:
@@ -29,3 +30,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/audio/

@@ -5,19 +5,20 @@ import 'letter_tile.dart';
 
 /// Tablero de 6 filas x 5 columnas.
 ///
-/// Recibe el estado ya calculado por el proveedor (o el teclado físico) y lo
-/// dibuja usando [LetterTile].
+/// Recibe el estado ya calculado por el proveedor y lo dibuja usando
+/// [LetterTile]. Las fichas de una fila se revelan en cascada (cada letra
+/// gira ligeramente después de la anterior).
 class GridBoard extends StatelessWidget {
   const GridBoard({
     super.key,
     required this.rows,
     this.cellSize = 56,
     this.spacing = 6,
+    this.cascade = true,
   });
 
   /// Filas del tablero. Cada fila es una lista de 5 celdas
-  /// `(letra, estado)`. Las filas pueden tener menos elementos si la partida
-  /// está en curso.
+  /// `(letra, estado)`.
   final List<List<({String letter, LetterResult result})>> rows;
 
   /// Lado de cada celda.
@@ -25,6 +26,9 @@ class GridBoard extends StatelessWidget {
 
   /// Separación entre celdas.
   final double spacing;
+
+  /// `true` para revelar las letras en cascada.
+  final bool cascade;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +50,9 @@ class GridBoard extends StatelessWidget {
                       letter: rows[rowIndex][colIndex].letter,
                       result: rows[rowIndex][colIndex].result,
                       size: cellSize,
+                      revealDelay: cascade
+                          ? Duration(milliseconds: 70 * colIndex)
+                          : Duration.zero,
                     ),
                   ),
               ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../core/theme/app_theme.dart';
+import '../../models/game_guess.dart';
 import '../../models/game_stats.dart';
 import '../../models/word_entry.dart';
 
@@ -14,6 +15,7 @@ class StatsDialog extends StatelessWidget {
     required this.wordEntry,
     required this.won,
     required this.attempts,
+    this.guesses = const <GameGuess>[],
   });
 
   /// Estadísticas acumuladas del jugador.
@@ -28,20 +30,56 @@ class StatsDialog extends StatelessWidget {
   /// Número de intentos utilizados.
   final int attempts;
 
+  /// Intentos evaluados (para el cuadro de emojis al compartir).
+  final List<GameGuess> guesses;
+
   /// Longitud de la palabra secreta.
   static const int wordLength = 5;
 
-  /// Texto del resultado para compartir.
+  /// Emoji asociado a cada estado de evaluación.
+  static String emojiFor(LetterResult result) {
+    switch (result) {
+      case LetterResult.correct:
+        return '🟩';
+      case LetterResult.present:
+        return '🟨';
+      case LetterResult.absent:
+        return '⬜';
+      case LetterResult.none:
+        return '⬛';
+    }
+  }
+
+  /// Cuadro de emojis con el resultado, estilo Wordle.
+  String get emojiGrid {
+    if (guesses.isEmpty) return '';
+    final buffer = StringBuffer();
+    for (final guess in guesses) {
+      for (final result in guess.results) {
+        buffer.write(emojiFor(result));
+      }
+      buffer.write('\n');
+    }
+    return buffer.toString().trimRight();
+  }
+
+  /// Texto completo para compartir.
   String get shareText {
     final word = wordEntry?.normalized ?? '?????';
+    final grid = emojiGrid;
+    final header = won
+        ? 'Jergadle $attempts/$wordLength'
+        : 'Jergadle X/$wordLength';
     final result = won
-        ? '¡Adiviné la jerga del día en $attempts ${attempts == 1 ? 'intento' : 'intentos'}!'
+        ? '¡Adiviné la jerga del día en $attempts '
+            '${attempts == 1 ? 'intento' : 'intentos'}!'
         : 'La jerga del día era $word y no la saqué.';
-    return 'Jergadle $attempts/$wordLength\n$result';
+    return grid.isEmpty ? '$header\n$result' : '$header\n$grid\n$result';
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Dialog(
       insetPadding: const EdgeInsets.all(16),
       child: ConstrainedBox(
@@ -55,10 +93,10 @@ class StatsDialog extends StatelessWidget {
               Text(
                 won ? '¡Ganaste, causa!' : 'Se te fue, causa...',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w800,
-                  color: AppTheme.accent,
+                  color: theme.accent,
                 ),
               ),
               const SizedBox(height: 4),
@@ -99,17 +137,17 @@ class StatsDialog extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: AppTheme.background,
+                    color: theme.tileEmpty,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: AppTheme.tileEmptyBorder),
+                    border: Border.all(color: theme.tileEmptyBorder),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      const Text(
+                      Text(
                         'QUÉ SIGNIFICA EN EL PERÚ',
                         style: TextStyle(
-                          color: AppTheme.accent,
+                          color: theme.accent,
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 1.2,
@@ -131,7 +169,7 @@ class StatsDialog extends StatelessWidget {
                     child: TextButton.icon(
                       onPressed: () {
                         Navigator.of(context).pop();
-                        showShareSheet(context, shareText);
+                        showShareSheet(context, shareText, emojiGrid);
                       },
                       icon: const Icon(Icons.ios_share, size: 18),
                       label: const Text('Compartir'),
@@ -163,12 +201,13 @@ class _StatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Text(label, style: const TextStyle(color: AppTheme.subtle, fontSize: 14)),
+          Text(label, style: TextStyle(color: theme.subtle, fontSize: 14)),
           Text(
             value,
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
@@ -187,14 +226,15 @@ class _Distribution extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final maxValue = distribution.fold<int>(1, (a, b) => b > a ? b : a);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        const Text(
+        Text(
           'DISTRIBUCIÓN DE INTENTOS',
           style: TextStyle(
-            color: AppTheme.subtle,
+            color: theme.subtle,
             fontSize: 11,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,
@@ -210,7 +250,7 @@ class _Distribution extends StatelessWidget {
                   width: 20,
                   child: Text(
                     '${i + 1}',
-                    style: const TextStyle(color: AppTheme.subtle, fontSize: 13),
+                    style: TextStyle(color: theme.subtle, fontSize: 13),
                   ),
                 ),
                 const SizedBox(width: 6),
@@ -218,9 +258,9 @@ class _Distribution extends StatelessWidget {
                   child: Container(
                     height: 18,
                     decoration: BoxDecoration(
-                      color: AppTheme.background,
+                      color: theme.tileEmpty,
                       borderRadius: BorderRadius.circular(3),
-                      border: Border.all(color: AppTheme.tileEmptyBorder),
+                      border: Border.all(color: theme.tileEmptyBorder),
                     ),
                     child: FractionallySizedBox(
                       alignment: Alignment.centerLeft,
@@ -252,21 +292,57 @@ class _Distribution extends StatelessWidget {
 }
 
 /// Hoja inferior para compartir el resultado (móvil) o diálogo (web).
-Future<void> showShareSheet(BuildContext context, String text) {
+Future<void> showShareSheet(
+  BuildContext context,
+  String text, [
+  String emojiGrid = '',
+]) {
+  final theme = Theme.of(context);
   return showModalBottomSheet<void>(
     context: context,
-    backgroundColor: const Color(0xFF1A1A1B),
+    backgroundColor: Colors.transparent,
     builder: (BuildContext sheetContext) => SafeArea(
-      child: Padding(
+      child: Container(
+        decoration: BoxDecoration(
+          color: theme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
+        ),
         padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Text(
+              'TU RESULTADO',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 2,
+                color: theme.accent,
+              ),
+            ),
+            const SizedBox(height: 14),
+            if (emojiGrid.isNotEmpty)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: theme.tileEmpty,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: theme.tileEmptyBorder),
+                ),
+                child: Text(
+                  emojiGrid,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 18, height: 1.5),
+                ),
+              ),
+            if (emojiGrid.isNotEmpty) const SizedBox(height: 14),
+            Text(
               text,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 16, height: 1.5),
+              style: const TextStyle(fontSize: 15, height: 1.5),
             ),
             const SizedBox(height: 20),
             FilledButton.icon(
@@ -275,7 +351,9 @@ Future<void> showShareSheet(BuildContext context, String text) {
                 if (sheetContext.mounted) Navigator.of(sheetContext).pop();
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Resultado copiado al portapapeles')),
+                    const SnackBar(
+                      content: Text('Resultado copiado al portapapeles'),
+                    ),
                   );
                 }
               },

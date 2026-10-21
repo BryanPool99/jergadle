@@ -6,6 +6,8 @@ import 'package:jergadle/app.dart';
 import 'package:jergadle/ui/widgets/grid_board.dart';
 import 'package:jergadle/ui/widgets/virtual_keyboard.dart';
 
+import 'helpers/test_helpers.dart';
+
 /// Verifica que el tablero y el teclado no se desbordan en distintos anchos
 /// y que mantienen el mismo ancho (alineados).
 void main() {
@@ -22,12 +24,11 @@ void main() {
     testWidgets('layout sin desbordamiento a ${size.width}x${size.height}',
         (WidgetTester tester) async {
       SharedPreferences.setMockInitialValues(<String, Object>{});
-      tester.view.physicalSize = size;
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.reset);
+      tester.setScreenSize(size);
 
+      tester.enableReducedMotion();
       await tester.pumpWidget(const JergadleApp());
-      await tester.pumpAndSettle();
+      await tester.goToGame();
 
       final board = tester.getRect(find.byType(GridBoard));
       final keyboard = tester.getRect(find.byType(VirtualKeyboard));
@@ -41,4 +42,19 @@ void main() {
       expect((board.center.dx - keyboard.center.dx).abs(), lessThan(1.0));
     });
   }
+
+  testWidgets('la pantalla de inicio se ve bien en movil',
+      (WidgetTester tester) async {
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    tester.setScreenSize(const Size(320, 700));
+
+    tester.enableReducedMotion();
+      await tester.pumpWidget(const JergadleApp());
+    await tester.pumpAndSettle();
+
+    expect(find.text('JERGADLE'), findsWidgets);
+    expect(find.text('JUGAR'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }
+
