@@ -105,16 +105,32 @@ class _LetterTileState extends State<LetterTile>
         : _backgroundColor;
   }
 
-  /// Cara "frontal": casilla vacía con borde.
+  /// Cara "frontal": casilla con borde y, si ya hay letra escrita, la letra.
+  ///
+  /// Igual que en el Wordle clásico, la letra que estás escribiendo aparece
+  /// de inmediato sobre la casilla vacía; luego la ficha gira para mostrar su
+  /// color definitivo.
   Widget _buildFront() {
+    final theme = Theme.of(context);
     return Container(
       width: widget.size,
       height: widget.size,
       decoration: BoxDecoration(
-        color: Theme.of(context).tileEmpty,
-        border: Border.all(color: Theme.of(context).tileEmptyBorder, width: 2),
+        color: theme.tileEmpty,
+        border: Border.all(color: theme.tileEmptyBorder, width: 2),
         borderRadius: BorderRadius.circular(4),
       ),
+      alignment: Alignment.center,
+      child: widget.letter.isEmpty
+          ? null
+          : Text(
+              widget.letter,
+              style: TextStyle(
+                color: theme.onBackground,
+                fontSize: widget.size * 0.46,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
     );
   }
 
