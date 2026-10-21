@@ -16,30 +16,15 @@ const List<WordEntry> peruvianWords = <WordEntry>[
         '«¡causa!» es una forma cariñosa de llamar a un amigo.',
   ),
   WordEntry(
-    word: 'CHAMBA',
+    word: 'CHELA',
     definition:
-        'Trabajo. Del inglés "job". «¿Cómo te va en la chamba?»',
+        'Cerveza light. Por extensión, también el candado de una puerta.',
   ),
   WordEntry(
     word: 'PALTA',
     definition:
         'Aguacate. En Perú es fundamental en la cocina y en el «paltear», '
         'golpear a alguien con una palta.',
-  ),
-  WordEntry(
-    word: 'CHELA',
-    definition:
-        'Cerveza light. Por extensión, también el candado de una puerta.',
-  ),
-  WordEntry(
-    word: 'PIÑA',
-    definition:
-        'Error o cacharrería. «Metí la pata, fue una piña».',
-  ),
-  WordEntry(
-    word: 'FIRME',
-    definition:
-        'Seguro, en orden, sin problema. «Todo firme» = todo tranquilo.',
   ),
   WordEntry(
     word: 'MONSE',
@@ -62,11 +47,6 @@ const List<WordEntry> peruvianWords = <WordEntry>[
         'Elegante, con estilo. «Anda con plumas» = viste bien.',
   ),
   WordEntry(
-    word: 'PATA',
-    definition:
-        'Amigo, compadre. «¡Hola, pata!»',
-  ),
-  WordEntry(
     word: 'TARDE',
     definition:
         'Saludo informal: «¡Tarde!». Como adjetivo significa malo o fuera de '
@@ -78,48 +58,14 @@ const List<WordEntry> peruvianWords = <WordEntry>[
         'Aburrimiento, desgano, pereza. «¡Qué fiaca, no salgo!»',
   ),
   WordEntry(
-    word: 'PICO',
-    definition:
-        'Inútil, que no sirve. «No sirve de pico». También la moneda de un '
-        'sol.',
-  ),
-  WordEntry(
-    word: 'BIRRIA',
-    definition:
-        'Guiso de carne de res típico del norte del Perú. Como jerga, '
-        '«estar birria» es quedar jadeando.',
-  ),
-  WordEntry(
-    word: 'CHICHO',
-    definition:
-        'Chicha, bebida tradicional peruana. En el norte, «chicha» también '
-        'significa cariño o amor.',
-  ),
-  WordEntry(
     word: 'PLANO',
     definition:
         'Sin plata o sin recursos. «Estoy plano» = no tengo un centavo.',
   ),
   WordEntry(
-    word: 'FIERRO',
-    definition:
-        'Bueno, guapo. «Echar los fierros» = posesarse o ponerse tough.',
-  ),
-  WordEntry(
     word: 'ARENA',
     definition:
         'Expresión «no te cures la arena»: no te creas ese cuento.',
-  ),
-  WordEntry(
-    word: 'YAÑA',
-    definition:
-        'Maña, astucia. «Tiene yaña» = se las sabe todas.',
-  ),
-  WordEntry(
-    word: 'NICA',
-    definition:
-        '«Ni cagando»: de ninguna manera. Como interjección, «¡nica!» = '
-        '¡nada!',
   ),
   WordEntry(
     word: 'COLLA',
@@ -146,11 +92,6 @@ const List<WordEntry> peruvianWords = <WordEntry>[
     word: 'POLLO',
     definition:
         '«A la pollera»: al revés. Todo lo que va «a la pollera» sale mal.',
-  ),
-  WordEntry(
-    word: 'VANO',
-    definition:
-        '«Ser vano»: ser inútil, inservible. De ahí viene «vanidad».',
   ),
   WordEntry(
     word: 'BRUJA',
@@ -183,17 +124,6 @@ const List<WordEntry> peruvianWords = <WordEntry>[
         'Tacaño, que no suelta ni un centavo. «¡Cobra, no me fastidies!»',
   ),
   WordEntry(
-    word: 'ROCA',
-    definition:
-        'Durísimo, invencible. «El muro es una roca».',
-  ),
-  WordEntry(
-    word: 'LIMA',
-    definition:
-        'Ciudad capital del Perú. También el fruto ácido con el que se '
-        'elabora el pisco.',
-  ),
-  WordEntry(
     word: 'PISTO',
     definition:
         'Dinero. «No tengo pisto» = no tengo plata.',
@@ -202,17 +132,6 @@ const List<WordEntry> peruvianWords = <WordEntry>[
     word: 'CHACA',
     definition:
         'Casa de juego de azar o rifa informal. «Vamos a la chaca».',
-  ),
-  WordEntry(
-    word: 'FANO',
-    definition:
-        '«Salir al fano»: salir a la calle, al mundo.',
-  ),
-  WordEntry(
-    word: 'GRINGO',
-    definition:
-        'Extranjero, especialmente de habla anglosajona. De uso muy común '
-        'en el Perú.',
   ),
   WordEntry(
     word: 'QUEBE',
@@ -235,16 +154,6 @@ const List<WordEntry> peruvianWords = <WordEntry>[
         'Bebida de una vez. «Dame un trago» o «echar un trago» = tomar.',
   ),
   WordEntry(
-    word: 'CHAMPI',
-    definition:
-        'Champú. Jerga por alargamiento fonético.',
-  ),
-  WordEntry(
-    word: 'LONCHE',
-    definition:
-        'Almuerzo. Del inglés «lunch». «¿Ya almorzaste o te traigo un lonche?»',
-  ),
-  WordEntry(
     word: 'GUARO',
     definition:
         'Aguardiente de uva típico del sur del Perú.',
@@ -253,11 +162,6 @@ const List<WordEntry> peruvianWords = <WordEntry>[
     word: 'PISCO',
     definition:
         'Aguardiente de uva de origen peruano y base del Pisco Sour.',
-  ),
-  WordEntry(
-    word: 'CHUSCO',
-    definition:
-        'Perro callejero. Por extensión, algo de mal gusto o descuidado.',
   ),
   WordEntry(
     word: 'CHUCO',
@@ -290,11 +194,6 @@ const List<WordEntry> peruvianWords = <WordEntry>[
         '«Estar en su borra»: estar borracho.',
   ),
   WordEntry(
-    word: 'PIFO',
-    definition:
-        'Error o equivocación. «¡Pifo!» = te equivocaste.',
-  ),
-  WordEntry(
     word: 'FORRO',
     definition:
         'Tonto, bobo. «¡Qué forro!» = qué tonto.',
@@ -322,18 +221,13 @@ const List<WordEntry> peruvianWords = <WordEntry>[
   WordEntry(
     word: 'FATAL',
     definition:
-        '«¡Qué fatal!»: expresión que celebrate un buenos resultado con '
+        '«¡Qué fatal!»: expresión que celebra un buenos resultado con '
         'entusiasmo.',
   ),
   WordEntry(
     word: 'CHULA',
     definition:
         'Muy buena, bonita. «¡Qué chula!» = qué bueno.',
-  ),
-  WordEntry(
-    word: 'NUBE',
-    definition:
-        '«Estar con la nube»: estar de mal humor, molesto.',
   ),
   WordEntry(
     word: 'PELON',
@@ -387,9 +281,75 @@ const List<WordEntry> peruvianWords = <WordEntry>[
         'Expresión de fastidio o sorpresa: «¡Chota!» = ¡qué lata!',
   ),
   WordEntry(
-    word: 'PESCAR',
+    word: 'BACÁN',
     definition:
-        'Conseguir o alcanzar algo. «Pesqué el trabajo».',
+        'Muy bueno, semiconductor de moda. «¡Qué bacán!» = qué bueno.',
+  ),
+  WordEntry(
+    word: 'PAILA',
+    definition:
+        'Sano, con buena pinta. «¡Qué paila!» = qué bien.',
+  ),
+  WordEntry(
+    word: 'GREÑA',
+    definition:
+        'Pelear. «¡Dame grena!» = ¡pelea!',
+  ),
+  WordEntry(
+    word: 'CHUPA',
+    definition:
+        'Chupete. Como jerga, «ser chupa» es ser muy joven o muy Canalla.',
+  ),
+  WordEntry(
+    word: 'TRUCO',
+    definition:
+        'Apaño, recurso rápido para salir del paso. «Sabe el truco».',
+  ),
+  WordEntry(
+    word: 'LIMON',
+    definition:
+        'Fruto ácido. «Aguantar el limón» = aguantar una situación difícil.',
+  ),
+  WordEntry(
+    word: 'PIÑON',
+    definition:
+        'Semilla del pino, usada en la cocina peruana. También «dar piñón» '
+        'es poner difícil a alguien.',
+  ),
+  WordEntry(
+    word: 'SANTO',
+    definition:
+        '«¡Ay, santo!»: expresión de sorpresa o fastidio. «¡Santo!».',
+  ),
+  WordEntry(
+    word: 'BOMBA',
+    definition:
+        '«Ser una bomba»: ser muy guapo o muy atractivo.',
+  ),
+  WordEntry(
+    word: 'PILAS',
+    definition:
+        '«A las pilas»: rápido, con energía. «¡Ponte las pilas!»',
+  ),
+  WordEntry(
+    word: 'TUMBA',
+    definition:
+        'Rebote o descarte. «Me dio tumba» = me rechazaron.',
+  ),
+  WordEntry(
+    word: 'FUEGO',
+    definition:
+        '«Ser fuego»: muy atractivo o con mucha energía.',
+  ),
+  WordEntry(
+    word: 'COMPA',
+    definition:
+        'Compadre, amigo de confianza. «¡Hola, compa!»',
+  ),
+  WordEntry(
+    word: 'CHUZA',
+    definition:
+        'Grosería, mala educación. «No seas chuza».',
   ),
 ];
 
