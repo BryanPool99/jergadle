@@ -53,6 +53,7 @@ class GameProvider extends ChangeNotifier {
   Map<String, LetterResult> _keyboardState = <String, LetterResult>{};
   GameStats _stats = GameStats.empty;
   bool _statsRecordedForDay = false;
+  bool _inPractice = false;
 
   /// `true` mientras se restaura el estado desde el almacenamiento.
   bool get isLoading => _isLoading;
@@ -115,6 +116,10 @@ class GameProvider extends ChangeNotifier {
   /// `true` si el día actual ya tiene una partida registrada (ganada o perdida).
   bool get hasPlayedToday => _statsRecordedForDay;
 
+  /// `true` si el usuario está jugando en modo práctica (no cuenta para las
+  /// estadísticas ni sobrescribe la partida del día).
+  bool get isPractice => _inPractice;
+
   /// `true` si la fila activa ya está completa (5 letras).
   bool get canSubmit => _currentInput.length == wordLength;
 
@@ -139,7 +144,16 @@ class GameProvider extends ChangeNotifier {
     final saved = await storage.loadDailyGame(_dateKey);
     if (saved != null) {
       _restore(saved);
-      _statsRecordedForDay = true;
+      // Las estadísticas ya se contabilizaron si el último día jugado es hoy.
+      _statsRecordedForDay = _stats.lastPlayedDate == _dateKey;
+      // Si la partida terminó pero las estadísticas no llegaron a guardarse
+      // (la app se cerró justo después del último intento), se corrige ahora.
+      if (saved.isFinished && !_statsRecordedForDay) {
+        await _recordStatsIfNeeded(
+          won: saved.isWin,
+          attempts: saved.guesses.length,
+        );
+      }
     } else {
       _secretIndex = _wordService.indexForDate(today);
       final entry = _wordService.entryForDate(today);
@@ -237,8 +251,17 @@ class GameProvider extends ChangeNotifier {
     }
 
     notifyListeners();
+    if (_inPractice) {
+      // El modo práctica no altera la partida guardada del día ni las
+      // estadísticas.
+      return true;
+    }
     await _persistGame();
-    await _recordStatsIfNeeded(won: result.isWin, attempts: _guesses.length);
+    // Las estadísticas sólo cuentan cuando la partida termina (ganada o
+    // perdida), no en cada intento.
+    if (isGameOver) {
+      await _recordStatsIfNeeded(won: result.isWin, attempts: _guesses.length);
+    }
     return true;
   }
 
@@ -303,6 +326,7 @@ class GameProvider extends ChangeNotifier {
   /// diaria.
   Future<void> startPractice() async {
     if (!isGameOver) return;
+    _inPractice = true;
     _guesses = <GameGuess>[];
     _keyboardState = <String, LetterResult>{};
     _currentInput = '';

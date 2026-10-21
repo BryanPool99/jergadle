@@ -1,11 +1,11 @@
 {
-    "name": "jergadle",
-    "short_name": "jergadle",
+    "name": "Jergadle - Wordle peruano",
+    "short_name": "Jergadle",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#121213",
+    "theme_color": "#121213",
+    "description": "Adivina las jergas peruanas de 5 letras. 6 intentos, una racha diaria y el significado de la jerga del dia.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
