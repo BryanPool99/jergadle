@@ -131,17 +131,31 @@ class GameProvider extends ChangeNotifier {
   // ---------------------------------------------------------------------
 
   /// Restaura el estado persistido y prepara la partida del día.
+  ///
+  /// Si el almacenamiento no está disponible (modo privado, cuota llena, etc.)
+  /// la partida sigue siendo jugable: simplemente no se restaura el progreso.
   Future<void> init() async {
     _isLoading = true;
     notifyListeners();
 
-    await storage.init();
-    _stats = await storage.loadStats();
-
     final today = _clock();
     _dateKey = DayKey.of(today);
+    _inPractice = false;
 
-    final saved = await storage.loadDailyGame(_dateKey);
+    try {
+      await storage.init();
+      _stats = await storage.loadStats();
+    } catch (_) {
+      _stats = GameStats.empty;
+    }
+
+    DailyGame? saved;
+    try {
+      saved = await storage.loadDailyGame(_dateKey);
+    } catch (_) {
+      saved = null;
+    }
+
     if (saved != null) {
       _restore(saved);
       // Las estadísticas ya se contabilizaron si el último día jugado es hoy.
@@ -163,7 +177,7 @@ class GameProvider extends ChangeNotifier {
       _keyboardState = <String, LetterResult>{};
       _status = GameStatus.playing;
       _currentInput = '';
-      await storage.saveDailyGame(
+      await _safeSave(
         DailyGame(
           dateKey: _dateKey,
           secretIndex: _secretIndex,
@@ -175,6 +189,15 @@ class GameProvider extends ChangeNotifier {
     _isLoading = false;
     _isInitialized = true;
     notifyListeners();
+  }
+
+  /// Guarda la partida sin propagar errores de almacenamiento.
+  Future<void> _safeSave(DailyGame game) async {
+    try {
+      await storage.saveDailyGame(game);
+    } catch (_) {
+      // Sin persistencia la partida sigue siendo jugable en memoria.
+    }
   }
 
   /// Restaura una partida guardada.
@@ -284,7 +307,7 @@ class GameProvider extends ChangeNotifier {
 
   /// Guarda la partida actual en `SharedPreferences`.
   Future<void> _persistGame() async {
-    await storage.saveDailyGame(
+    await _safeSave(
       DailyGame(
         dateKey: _dateKey,
         secretIndex: _secretIndex,
@@ -307,8 +330,12 @@ class GameProvider extends ChangeNotifier {
         ? _stats.recordWin(attempts: attempts, date: _clock())
         : _stats.recordResult(won: false, date: _clock());
 
-    await storage.saveStats(_stats);
-    await storage.recordHistoryEntry(dateKey: _dateKey, won: won);
+    try {
+      await storage.saveStats(_stats);
+      await storage.recordHistoryEntry(dateKey: _dateKey, won: won);
+    } catch (_) {
+      // Sin persistencia, las estadísticas sólo viven en memoria.
+    }
   }
 
   /// Comprueba si cambió el día (la app quedó abierta a medianoche) y, si es
