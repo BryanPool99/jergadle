@@ -3,9 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_theme.dart';
+import '../../models/daily_game.dart';
+import '../../models/game_guess.dart';
 import '../../providers/game_provider.dart';
+import '../../providers/settings_provider.dart';
+import '../../services/sound_service.dart';
 import '../widgets/app_header.dart';
 import '../widgets/grid_board.dart';
+import '../widgets/shake_transition.dart';
 import '../widgets/stats_dialog.dart';
 import '../widgets/virtual_keyboard.dart';
 
@@ -15,23 +20,53 @@ import '../widgets/virtual_keyboard.dart';
 /// - Móvil (ancho < 700): cabecera, tablero, teclado en columna.
 /// - Web / tablet (ancho >= 700): panel lateral con estadísticas + hints.
 class GameScreen extends StatefulWidget {
-  const GameScreen({super.key});
+  const GameScreen({super.key, this.initialLetter});
+
+  /// Letra que se escribe automáticamente al entrar (teclado físico).
+  final String? initialLetter;
 
   @override
   State<GameScreen> createState() => _GameScreenState();
 }
 
-class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
+class _GameScreenState extends State<GameScreen>
+    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   bool _dialogShown = false;
+
+  /// Número de intentos ya revelados (para detectar filas nuevas).
+  int _revealedGuesses = 0;
+
+  /// Estado de juego de la última revisión (para detectar fin de partida).
+  GameStatus _lastStatus = GameStatus.playing;
+
+  /// Último contador de intentos inválidos visto.
+  int _lastInvalidCount = 0;
+
+  /// Controlador de la entrada animada de la pantalla.
+  late final AnimationController _entrance = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 650),
+  );
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _entrance.forward();
+
+    // Letra escrita desde la pantalla de inicio.
+    final initial = widget.initialLetter;
+    if (initial != null && initial.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        context.read<GameProvider>().addLetter(initial);
+      });
+    }
   }
 
   @override
   void dispose() {
+    _entrance.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -48,6 +83,38 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final game = context.watch<GameProvider>();
+
+    // Sonido al revelar una fila nueva.
+    if (game.guesses.length != _revealedGuesses) {
+      _revealedGuesses = game.guesses.length;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _playGuessSound(game);
+      });
+    }
+
+    // Aviso visual cuando se envía un intento incompleto.
+    if (game.invalidAttemptCount != _lastInvalidCount) {
+      final isFirst = _lastInvalidCount == 0;
+      _lastInvalidCount = game.invalidAttemptCount;
+      if (!isFirst) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          _showInvalidAttemptHint();
+        });
+      }
+    }
+
+    // Sonido de victoria o derrota.
+    if (game.status != _lastStatus) {
+      _lastStatus = game.status;
+      if (game.isGameOver) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          _playEndSound(game);
+        });
+      }
+    }
 
     // Mostrar el diálogo automáticamente al terminar la partida diaria.
     // En modo práctica se muestra un resumen simple sin afectar estadísticas.
@@ -81,6 +148,8 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                         DateTime.now(),
                       ) + 1,
                       onStatsPressed: () => _showStatsDialog(game),
+                      onBackPressed: () =>
+                          Navigator.of(context).maybePop(),
                     ),
                     Expanded(
                       child: LayoutBuilder(
@@ -92,9 +161,30 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                                 minHeight: inner.maxHeight,
                               ),
                               child: Center(
-                                child: isWide
-                                    ? _wideLayout(game: game)
-                                    : _narrowLayout(game: game),
+                                child: FadeTransition(
+                                  opacity: CurvedAnimation(
+                                    parent: _entrance,
+                                    curve: const Interval(
+                                      0,
+                                      0.7,
+                                      curve: Curves.easeOut,
+                                    ),
+                                  ),
+                                  child: SlideTransition(
+                                    position: Tween<Offset>(
+                                      begin: const Offset(0, 0.03),
+                                      end: Offset.zero,
+                                    ).animate(
+                                      CurvedAnimation(
+                                        parent: _entrance,
+                                        curve: Curves.easeOutCubic,
+                                      ),
+                                    ),
+                                    child: isWide
+                                        ? _wideLayout(game: game)
+                                        : _narrowLayout(game: game),
+                                  ),
+                                ),
                               ),
                             ),
                           );
@@ -205,10 +295,13 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
         if (cell < 32) cell = 32;
 
         return Center(
-          child: GridBoard(
-            rows: game.board,
-            cellSize: cell,
-            spacing: spacing,
+          child: ShakeTransition(
+            trigger: game.invalidAttemptCount,
+            child: GridBoard(
+              rows: game.board,
+              cellSize: cell,
+              spacing: spacing,
+            ),
           ),
         );
       },
@@ -217,6 +310,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
 
   /// Línea de estado bajo el tablero.
   Widget _statusLine({required GameProvider game}) {
+    final theme = Theme.of(context);
     String text;
     IconData icon;
     Color color;
@@ -227,23 +321,23 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
           ? '¡La pegaste! La jerga era ${game.secretWord}'
           : 'La jerga era ${game.secretWord}';
       icon = won ? Icons.emoji_events : Icons.sentiment_dissatisfied;
-      color = won ? AppTheme.correct : AppTheme.subtle;
+      color = won ? AppTheme.correct : theme.subtle;
     } else if (game.attemptsRemaining <= 2) {
       text = '¡Últimos ${game.attemptsRemaining} intentos!';
       icon = Icons.warning_amber_rounded;
-      color = AppTheme.accent;
+      color = theme.accent;
     } else {
       text = 'Adivina la jerga peruana de 5 letras';
       icon = Icons.lightbulb_outline;
-      color = AppTheme.subtle;
+      color = theme.subtle;
     }
 
     return Center(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: AppTheme.background,
-          border: Border.all(color: AppTheme.tileEmptyBorder),
+          color: theme.tileEmpty,
+          border: Border.all(color: theme.tileEmptyBorder),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
@@ -266,6 +360,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   /// Panel lateral de información (solo en layout ancho).
   Widget _infoPanel({required GameProvider game}) {
     final stats = game.stats;
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -292,12 +387,12 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
         _InfoCard(
           title: 'CÓMO JUGAR',
           children: <Widget>[
-            const Text(
+            Text(
               '• Verde: letra en su posición.\n'
               '• Amarillo: letra presente, mal posición.\n'
               '• Gris: la letra no está.\n'
               '• 6 intentos por día.',
-              style: TextStyle(fontSize: 12, color: AppTheme.subtle, height: 1.6),
+              style: TextStyle(fontSize: 12, color: theme.subtle, height: 1.6),
             ),
           ],
         ),
@@ -315,15 +410,20 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
         }
         if (event.logicalKey == LogicalKeyboardKey.enter ||
             event.logicalKey == LogicalKeyboardKey.numpadEnter) {
+          _haptic();
           game.submitGuess();
           return KeyEventResult.handled;
         }
         if (event.logicalKey == LogicalKeyboardKey.backspace) {
+          _haptic();
+          context.read<SoundService>().play(SoundEffect.key);
           game.backspace();
           return KeyEventResult.handled;
         }
         final letter = physicalKeyToLetter(event);
         if (letter != null) {
+          _haptic();
+          context.read<SoundService>().play(SoundEffect.key);
           game.addLetter(letter);
           return KeyEventResult.handled;
         }
@@ -338,21 +438,81 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
             enabled: !game.isGameOver,
             keyStates: game.keyboardState,
             onLetter: (String letter) {
-              keyboardHaptic();
+              _haptic();
+              context.read<SoundService>().play(SoundEffect.key);
               game.addLetter(letter);
             },
             onSubmit: () {
-              keyboardHaptic();
+              _haptic();
               game.submitGuess();
             },
             onBackspace: () {
-              keyboardHaptic();
+              _haptic();
+              context.read<SoundService>().play(SoundEffect.key);
               game.backspace();
             },
           ),
         ),
       ),
     );
+  }
+
+  /// Muestra un aviso cuando el intento enviado no tiene 5 letras.
+  void _showInvalidAttemptHint() {
+    final theme = Theme.of(context);
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: const Text('Necesito 5 letras para enviar la palabra'),
+          duration: const Duration(milliseconds: 1600),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: theme.tileEmptyBorder,
+        ),
+      );
+  }
+
+  /// Reproduce el sonido de las letras de la última fila enviada.
+  void _playGuessSound(GameProvider game) {
+    if (game.guesses.isEmpty) return;
+    final sound = context.read<SoundService>();
+    final guess = game.guesses.last;
+
+    sound.play(SoundEffect.submit);
+    for (final result in guess.results) {
+      // Pequeño retardo escalonado para que se oiga la secuencia.
+      Future<void>.delayed(
+        Duration(milliseconds: 90 * guess.results.indexOf(result)),
+        () => sound.play(_effectFor(result)),
+      );
+    }
+  }
+
+  /// Efecto de sonido asociado a un resultado de letra.
+  SoundEffect _effectFor(LetterResult result) {
+    switch (result) {
+      case LetterResult.correct:
+        return SoundEffect.correct;
+      case LetterResult.present:
+        return SoundEffect.present;
+      case LetterResult.absent:
+        return SoundEffect.absent;
+      case LetterResult.none:
+        return SoundEffect.key;
+    }
+  }
+
+  /// Reproduce el sonido de fin de partida.
+  void _playEndSound(GameProvider game) {
+    final sound = context.read<SoundService>();
+    sound.play(game.isWin ? SoundEffect.win : SoundEffect.lose);
+  }
+
+  /// Feedback háptico respetando la preferencia del usuario.
+  void _haptic() {
+    if (context.read<SettingsProvider>().hapticsEnabled) {
+      keyboardHaptic();
+    }
   }
 
   /// Resumen de fin de partida en modo práctica (no toca estadísticas).
@@ -395,6 +555,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
         wordEntry: game.secretEntry,
         won: game.isWin,
         attempts: game.attemptsUsed,
+        guesses: game.guesses,
       ),
     );
     if (!mounted) return;
@@ -437,11 +598,12 @@ class _InfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1B),
-        border: Border.all(color: AppTheme.tileEmptyBorder),
+        color: theme.surface,
+        border: Border.all(color: theme.tileEmptyBorder),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -449,11 +611,11 @@ class _InfoCard extends StatelessWidget {
         children: <Widget>[
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.2,
-              color: AppTheme.accent,
+              color: theme.accent,
             ),
           ),
           const SizedBox(height: 10),
@@ -473,12 +635,13 @@ class _InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Text(label, style: const TextStyle(fontSize: 13, color: AppTheme.subtle)),
+          Text(label, style: TextStyle(fontSize: 13, color: theme.subtle)),
           Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
         ],
       ),

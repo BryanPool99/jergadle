@@ -8,6 +8,7 @@ tu celular o tu navegador.
 - 🔥 Rachas diarias y mejor racha guardadas en el dispositivo
 - 📖 Al terminar te mostramos **qué significa la jerga en el Perú**
 - 📱 Android + 🌐 Web (responsive)
+- 🌗 Tema claro y oscuro, con sonido y animaciones
 
 ---
 
@@ -20,8 +21,24 @@ tu celular o tu navegador.
 | ⬜ Gris | La letra no está en la palabra |
 
 Escribe con el teclado virtual (incluye la **Ñ**) o con tu teclado físico.
-Al terminar la partida se abre un modal con tus estadísticas, la distribución de
-intentos y el **significado peruano de la jerga del día**.
+En la pantalla de inicio ya puedes escribir: la primera letra te mete
+directo al juego.
+
+Al terminar la partida se abre un modal con tus estadísticas, la distribución
+de intentos y el **significado peruano de la jerga del día**. Desde ahí puedes
+copiar tu resultado con el cuadro de emojis estilo Wordle:
+
+```
+Jergadle 3/5
+🟩⬜🟨⬜🟩
+🟩🟩🟩🟩🟩
+```
+
+### Ajustes
+
+En la pantalla de inicio, el icono de **rayos** (arriba a la derecha) alterna
+entre tema claro y oscuro, y el de **ajustes** abre el panel con sonido,
+feedback háptico y consejos. Todo se guarda en el dispositivo.
 
 ---
 
@@ -58,27 +75,37 @@ flutter build apk --release      # salida en build/app/outputs/flutter-apk
 lib/
 ├── main.dart                     # punto de entrada
 ├── app.dart                      # MaterialApp + MultiProvider
-├── core/theme/app_theme.dart     # paleta y tema Material 3
+├── core/theme/app_theme.dart     # temas claro/oscuro + colores semánticos
 ├── models/
 │   ├── word_entry.dart            # jerga + significado peruano
 │   ├── game_guess.dart            # intento evaluado + LetterResult
 │   ├── game_stats.dart            # rachas, victorias, distribución
-│   └── daily_game.dart            # estado serializable de la partida
+│   ├── daily_game.dart            # estado serializable de la partida
+│   └── app_settings.dart          # tema, sonido, háptica
 ├── data/peruvian_words.dart      # diccionario local (67 jergas)
 ├── services/
 │   ├── storage_service.dart       # SharedPreferences (async)
 │   ├── word_service.dart          # palabra del día (epoch + módulo)
-│   └── letter_evaluator.dart      # algoritmo de dos pasadas
-├── providers/game_provider.dart   # ChangeNotifier con toda la lógica
+│   ├── letter_evaluator.dart      # algoritmo de dos pasadas
+│   └── sound_service.dart         # efectos de sonido (audioplayers)
+├── providers/
+│   ├── game_provider.dart         # ChangeNotifier con toda la lógica
+│   └── settings_provider.dart     # preferencias del jugador
 ├── ui/
-│   ├── screens/game_screen.dart    # layout responsive
+│   ├── screens/
+│   │   ├── home_screen.dart       # pantalla de inicio con las reglas
+│   │   └── game_screen.dart       # layout responsive del juego
 │   └── widgets/
-│       ├── letter_tile.dart        # ficha de letra con color
-│       ├── grid_board.dart         # tablero 6x5
+│       ├── letter_tile.dart        # ficha con giro 3D
+│       ├── grid_board.dart         # tablero 6x5 en cascada
 │       ├── virtual_keyboard.dart   # teclado QWERTY con Ñ
-│       ├── stats_dialog.dart       # modal de estadísticas + definición
+│       ├── stats_dialog.dart       # modal + cuadro de emojis
+│       ├── shake_transition.dart   # sacudida del tablero
+│       ├── home_background.dart    # jergas flotantes
+│       ├── settings_sheet.dart     # hoja de ajustes
 │       └── app_header.dart         # cabecera con racha
 └── utils/day_key.dart             # helpers de fecha (yyyy-MM-dd)
+assets/audio/                      # efectos de sonido (.wav)
 ```
 
 ### Palabras repetidas
@@ -120,6 +147,7 @@ Todo se guarda en `SharedPreferences` con claves versionadas:
 | `jergadle.daily.<yyyy-MM-dd>` | partida del día (intentos + estado) |
 | `jergadle.daily.last` | clave del último día jugado |
 | `jergadle.history` | historial de partidas |
+| `jergadle.settings` | tema, sonido, háptica y consejos |
 
 Al reabrir la app el mismo día, la partida se restaura tal cual estaba.
 

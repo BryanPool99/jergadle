@@ -1,5 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../models/app_settings.dart';
 import '../models/daily_game.dart';
 import '../models/game_stats.dart';
 
@@ -18,6 +19,7 @@ class StorageService {
   static const String keyLastDaily = 'jergadle.daily.last';
   static const String keyHistory = 'jergadle.history';
   static const String keyDictionaryVersion = 'jergadle.dict.version';
+  static const String keySettings = 'jergadle.settings';
 
   /// Prefijo de las claves de partida diaria.
   static const String dailyKeyPrefix = 'jergadle.daily.';
@@ -86,6 +88,22 @@ class StorageService {
   }
 
   // ---------------------------------------------------------------------
+  // Ajustes
+  // ---------------------------------------------------------------------
+
+  /// Lee los ajustes guardados (o los valores por defecto).
+  Future<AppSettings> loadSettings() async {
+    final prefs = await _prefsInstance;
+    return AppSettings.decode(prefs.getString(keySettings));
+  }
+
+  /// Guarda los ajustes.
+  Future<void> saveSettings(AppSettings settings) async {
+    final prefs = await _prefsInstance;
+    await prefs.setString(keySettings, settings.encode());
+  }
+
+  // ---------------------------------------------------------------------
   // Historial
   // ---------------------------------------------------------------------
 
@@ -128,6 +146,7 @@ class StorageService {
     await prefs.remove(keyStats);
     await prefs.remove(keyLastDaily);
     await prefs.remove(keyHistory);
+    await prefs.remove(keySettings);
     final keys = prefs.getKeys().where((k) => k.startsWith(dailyKeyPrefix));
     for (final key in keys) {
       await prefs.remove(key);

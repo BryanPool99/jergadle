@@ -10,6 +10,7 @@ class AppHeader extends StatelessWidget {
     required this.stats,
     required this.onStatsPressed,
     this.dayNumber,
+    this.onBackPressed,
   });
 
   /// Estadísticas mostradas en la cabecera.
@@ -21,33 +22,45 @@ class AppHeader extends StatelessWidget {
   /// Número de día del challenge (opcional).
   final int? dayNumber;
 
+  /// Callback al pulsar el botón de volver (opcional).
+  final VoidCallback? onBackPressed;
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return SafeArea(
       bottom: false,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 8, 4),
+        padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
         child: Row(
           children: <Widget>[
+            if (onBackPressed != null)
+              IconButton(
+                tooltip: 'Volver al inicio',
+                onPressed: onBackPressed,
+                icon: Icon(Icons.arrow_back, color: theme.onBackground),
+              )
+            else
+              const SizedBox(width: 8),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  const Text(
+                  Text(
                     'JERGADLE',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 3,
-                      color: AppTheme.accent,
+                      color: theme.accent,
                     ),
                   ),
                   Text(
                     dayNumber != null ? 'Jerga del día #$dayNumber' : 'La jerga del día',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
-                      color: AppTheme.subtle,
+                      color: theme.subtle,
                     ),
                   ),
                 ],
@@ -57,7 +70,7 @@ class AppHeader extends StatelessWidget {
             IconButton(
               tooltip: 'Estadísticas',
               onPressed: onStatsPressed,
-              icon: const Icon(Icons.bar_chart, color: AppTheme.onBackground),
+              icon: Icon(Icons.bar_chart, color: theme.onBackground),
             ),
           ],
         ),
@@ -74,17 +87,22 @@ class _StreakBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: AppTheme.background,
-        border: Border.all(color: AppTheme.tileEmptyBorder),
+        color: theme.tileEmpty,
+        border: Border.all(color: theme.tileEmptyBorder),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          const Icon(Icons.local_fire_department, color: AppTheme.accent, size: 18),
+          Icon(
+            Icons.local_fire_department,
+            color: theme.accent,
+            size: 18,
+          ),
           const SizedBox(width: 4),
           Text(
             '$streak',

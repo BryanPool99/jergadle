@@ -50,7 +50,7 @@ class VirtualKeyboard extends StatelessWidget {
   final bool enabled;
 
   /// Color de fondo de una tecla según su estado.
-  Color _keyColor(LetterResult result) {
+  Color _keyColor(LetterResult result, BuildContext context) {
     switch (result) {
       case LetterResult.correct:
         return AppTheme.correct;
@@ -59,30 +59,36 @@ class VirtualKeyboard extends StatelessWidget {
       case LetterResult.absent:
         return AppTheme.absent;
       case LetterResult.none:
-        return AppTheme.tileEmptyBorder;
+        return Theme.of(context).tileEmptyBorder;
     }
   }
 
-  Widget _letterKey(String letter, double width, double height) {
+  Widget _letterKey(
+    BuildContext context,
+    String letter,
+    double width,
+    double height,
+  ) {
     final result = keyStates[letter] ?? LetterResult.none;
     final isKnown = result != LetterResult.none;
+    final theme = Theme.of(context);
 
     return Padding(
       padding: const EdgeInsets.all(3),
       child: SizedBox(
         width: width,
         height: height,
-        child: Material(
-          color: isKnown ? _keyColor(result) : AppTheme.tileEmptyBorder,
-          borderRadius: BorderRadius.circular(4),
-          child: InkWell(
-            onTap: enabled ? () => onLetter(letter) : null,
+        child: _PressableKey(
+          onTap: enabled ? () => onLetter(letter) : null,
+          child: Material(
+            color: isKnown ? _keyColor(result, context) : theme.tileEmptyBorder,
+            borderRadius: BorderRadius.circular(4),
             child: Center(
               child: Text(
                 letter,
                 key: ValueKey<String>('key-$letter'),
                 style: TextStyle(
-                  color: isKnown ? Colors.white : AppTheme.onBackground,
+                  color: isKnown ? Colors.white : theme.onBackground,
                   fontSize: (width * 0.55).clamp(15.0, 22.0),
                   fontWeight: FontWeight.w700,
                 ),
@@ -94,7 +100,8 @@ class VirtualKeyboard extends StatelessWidget {
     );
   }
 
-  Widget _actionKey({
+  Widget _actionKey(
+    BuildContext context, {
     required IconData icon,
     required String label,
     required VoidCallback? onTap,
@@ -102,28 +109,29 @@ class VirtualKeyboard extends StatelessWidget {
     required double height,
     Key? key,
   }) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.all(3),
       child: SizedBox(
         width: width,
         height: height,
-        child: Material(
-          color: AppTheme.tileEmptyBorder,
-          borderRadius: BorderRadius.circular(4),
-          child: InkWell(
-            onTap: onTap,
+        child: _PressableKey(
+          onTap: onTap,
+          child: Material(
+            color: theme.tileEmptyBorder,
+            borderRadius: BorderRadius.circular(4),
             child: Center(
               child: icon == Icons.backspace
-                  ? Icon(icon, color: AppTheme.onBackground, size: 20)
+                  ? Icon(icon, color: theme.onBackground, size: 20)
                   : Text(
-                          label,
-                          key: key,
-                          style: const TextStyle(
-                            color: AppTheme.onBackground,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
+                      label,
+                      key: key,
+                      style: TextStyle(
+                        color: theme.onBackground,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
             ),
           ),
         ),
@@ -149,14 +157,16 @@ class VirtualKeyboard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                for (final letter in row1) _letterKey(letter, w, height),
+                for (final letter in row1)
+                  _letterKey(context, letter, w, height),
               ],
             ),
             // Fila 2
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                for (final letter in row2) _letterKey(letter, w, height),
+                for (final letter in row2)
+                  _letterKey(context, letter, w, height),
               ],
             ),
             // Fila 3: ENTER + Z..M + BACKSPACE
@@ -164,6 +174,7 @@ class VirtualKeyboard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 _actionKey(
+                  context,
                   icon: Icons.keyboard_return,
                   label: 'ENTER',
                   key: const ValueKey<String>('key-ENTER'),
@@ -171,8 +182,10 @@ class VirtualKeyboard extends StatelessWidget {
                   width: w * 1.5,
                   height: height,
                 ),
-                for (final letter in row3) _letterKey(letter, w, height),
+                for (final letter in row3)
+                  _letterKey(context, letter, w, height),
                 _actionKey(
+                  context,
                   icon: Icons.backspace,
                   label: '',
                   key: const ValueKey<String>('key-BACKSPACE'),
@@ -185,6 +198,45 @@ class VirtualKeyboard extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+}
+
+/// Tecla con retroalimentación visual al pulsarla.
+///
+/// Se hunde ligeramente y cambia de opacidad mientras está presionada.
+class _PressableKey extends StatefulWidget {
+  const _PressableKey({required this.onTap, required this.child});
+
+  final VoidCallback? onTap;
+  final Widget child;
+
+  @override
+  State<_PressableKey> createState() => _PressableKeyState();
+}
+
+class _PressableKeyState extends State<_PressableKey> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
+    final enabled = widget.onTap != null;
+
+    return GestureDetector(
+      onTapDown: enabled ? (_) => setState(() => _pressed = true) : null,
+      onTapUp: enabled ? (_) => setState(() => _pressed = false) : null,
+      onTapCancel: enabled ? () => setState(() => _pressed = false) : null,
+      onTap: widget.onTap,
+      child: AnimatedScale(
+        scale: reduceMotion || !_pressed ? 1.0 : 0.93,
+        duration: const Duration(milliseconds: 90),
+        child: AnimatedOpacity(
+          opacity: reduceMotion || !_pressed ? 1.0 : 0.75,
+          duration: const Duration(milliseconds: 90),
+          child: widget.child,
+        ),
+      ),
     );
   }
 }
