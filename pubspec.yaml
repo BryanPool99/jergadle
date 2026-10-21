@@ -1,9 +1,9 @@
-name: jergadle
-description: "Jergadle - Wordle peruano. Adivina las jergas del Perú de 5 letras."
+﻿name: jergadle
+description: "Jergadle - Wordle peruano. Adivina las jergas del PerÃº de 5 letras."
 publish_to: 'none'
 
 # version: major.minor.patch+build (SemVer, ver CHANGELOG.md)
-version: 0.1.0+1
+version: 0.2.0+2
 
 environment:
   sdk: ^3.13.5
@@ -15,7 +15,7 @@ dependencies:
   # Cupertino Icons (estilo iOS) - se mantiene para el widget adaptativo.
   cupertino_icons: ^1.0.8
 
-  # Gestión de estado declarativa (ChangeNotifier + ListenableBuilder).
+  # GestiÃ³n de estado declarativa (ChangeNotifier + ListenableBuilder).
   provider: ^6.1.2
 
   # Persistencia local en dispositivo (no hay backend).
@@ -33,3 +33,4 @@ flutter:
 
   assets:
     - assets/audio/
+
