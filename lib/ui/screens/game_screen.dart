@@ -21,8 +21,29 @@ class GameScreen extends StatefulWidget {
   State<GameScreen> createState() => _GameScreenState();
 }
 
-class _GameScreenState extends State<GameScreen> {
+class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   bool _dialogShown = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Al volver a la app puede haber cambiado el día (la app quedó abierta
+    // a medianoche): se prepara la nueva palabra del día.
+    if (state == AppLifecycleState.resumed) {
+      context.read<GameProvider>().checkNewDay();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
