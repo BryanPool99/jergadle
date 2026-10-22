@@ -9,9 +9,21 @@ el proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ### Anadido
 
-- 82 jergas peruanas autenticas en el diccionario (antes 67, con varias de
-  origen chileno o argentino). Fuentes: DiPeru (Academia Peruana de la
-  Lengua), Wikilengua y el diccionario de Gino Bosio.
+- 84 jergas limeñas de 5 letras en el diccionario, todas de uso real en Lima
+  y la costa central. Fuentes: DiPerú (Academia Peruana de la Lengua),
+  "Peruanismos de Lima y la costa central" (108 términos), Wikilengua y
+  Martha Hildebrandt.
+- Nuevas jergas: AGUJA, BROER, CRUDA, FICHO, GUCHA, GUITA, JONCA, LLECA,
+  LOMPA, LORNA, MISIO, ROCHE, SIMON, SONSO, TABAS, TASAR, TROME y YUNTA.
+- Test que valida letra por letra que cada palabra se puede teclear con el
+  teclado virtual.
+
+### Quitado
+
+- Las palabras que no son propiamente peruanas: chilenas (chulo, paila, greña,
+  trujo, chuza, fuego), mexicanas (tilin) y las que son español estándar sin
+  uso jergático local (macho, manso, cobra, plata, trago, hielo, jerga,
+  piñon, fatal, bolsa, gordo, lanza).
 - El modal final muestra el cuadro de emojis del resultado, sin necesidad de
   abrir la hoja de compartir.
 

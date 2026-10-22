@@ -3,7 +3,7 @@
 **Wordle peruano.** Adivina la jerga del día en 5 letras, todos los días, desde
 tu celular o tu navegador.
 
-- 🇵🇪 82 jergas/peruanismos de 5 letras en el diccionario local
+- 🇵🇪 84 jergas limeñas de 5 letras en el diccionario local
 - 🎯 6 intentos por día, misma palabra para todos (sin backend)
 - 🔥 Rachas diarias y mejor racha guardadas en el dispositivo
 - 📖 Al terminar te mostramos **qué significa la jerga en el Perú**
@@ -82,7 +82,7 @@ lib/
 │   ├── game_stats.dart            # rachas, victorias, distribución
 │   ├── daily_game.dart            # estado serializable de la partida
 │   └── app_settings.dart          # tema, sonido, háptica
-├── data/peruvian_words.dart      # diccionario local (82 jergas)
+├── data/peruvian_words.dart      # diccionario local (84 jergas)
 ├── services/
 │   ├── storage_service.dart       # SharedPreferences (async)
 │   ├── word_service.dart          # palabra del día (epoch + módulo)
@@ -180,15 +180,22 @@ Detalle completo en [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Extender el diccionario
 
-Las 82 jergas provienen del uso real limeño: el diccionario de
-peruanismos de la Academia Peruana de la Lengua (**DiPerú**), **Wikilengua** y
-el diccionario de Gino Bosio. Algunas son de registro vulgar (`CACHI`,
-`TARRO`, `PICHI`, `TALCO`), tal como se usan en la calle.
+Las 84 jergas son **de uso real en Lima y la costa central**, tomadas de:
 
-Todas tienen **exactamente 5 letras** (la Ñ y los acentos no entran, para no
-romper el teclado ni el cálculo de la palabra del día).
+- **DiPerú**, diccionario de la Academia Peruana de la Lengua
+- **Peruanismos de Lima y la costa central** (108 términos)
+- **Wikilengua**, *Jerga juvenil/Perú*
+- **Martha Hildebrandt**, *Peruanismos*
 
-Para añadir más, inserta al final de `lib/data/peruvian_words.dart`:
+Quedaron fuera las palabras que no son propiamente peruanas (chileno,
+argentino, mexicano) y las que son español estándar sin uso jergático local.
+
+Todas tienen **exactamente 5 letras** y se pueden teclear con el teclado
+virtual (el test lo comprueba letra por letra). Algunas son de registro vulgar
+(`CACHI`, `TARRO`, `PICHI`, `TALCO`), tal como se usan en la calle.
+
+Para añadir más, inserta en `lib/data/peruvian_words.dart` (en orden
+alfabético):
 
 ```dart
 WordEntry(
@@ -198,7 +205,8 @@ WordEntry(
 ```
 
 El test `word_service_test.dart` valida que todas tengan 5 letras, que no
-haya duplicados y que las definiciones no contengan caracteres corruptos.
+haya duplicados, que las definiciones no contengan caracteres corruptos y que
+cada letra exista en el teclado.
 
 ---
 
