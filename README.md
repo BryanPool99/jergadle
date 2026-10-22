@@ -15,9 +15,15 @@
   <a href="#cómo-ejecutar">📱 Instalar en Android</a>
 </p>
 
+<p align="center">
+  <img src="docs/screenshots/1_tablero.png" alt="Tablero de Jergadle" width="240">
+  <img src="docs/screenshots/4_victoria.png" alt="Modal de victoria" width="240">
+  <img src="docs/screenshots/2_inicio.png" alt="Pantalla de inicio" width="240">
+</p>
+
 ---
 
-- 🇵🇪 84 jergas limeñas de 5 letras en el diccionario local
+- 🇵🇪 74 jergas limeñas de 5 letras en el diccionario local
 - 🎯 6 intentos por día, misma palabra para todos (sin backend)
 - 🔥 Rachas diarias y mejor racha guardadas en el dispositivo
 - 📖 Al terminar te mostramos **qué significa la jerga en el Perú**
@@ -96,7 +102,7 @@ lib/
 │   ├── game_stats.dart            # rachas, victorias, distribución
 │   ├── daily_game.dart            # estado serializable de la partida
 │   └── app_settings.dart          # tema, sonido, háptica
-├── data/peruvian_words.dart      # diccionario local (84 jergas)
+├── data/peruvian_words.dart      # diccionario local (74 jergas)
 ├── services/
 │   ├── storage_service.dart       # SharedPreferences (async)
 │   ├── word_service.dart          # palabra del día (epoch + módulo)
@@ -194,7 +200,7 @@ Detalle completo en [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Extender el diccionario
 
-Las 84 jergas son **de uso real en Lima y la costa central**, tomadas de:
+Las 74 jergas son **de uso real en Lima y la costa central**, tomadas de:
 
 - **DiPerú**, diccionario de la Academia Peruana de la Lengua
 - **Peruanismos de Lima y la costa central** (108 términos)
@@ -237,6 +243,7 @@ colores de evaluación y la "J" en el color de acento.
 | `android/.../mipmap-*/ic_launcher.png` | Lanzador de Android (5 densidades) |
 | `web/og-image.png` | Vista previa al compartir el enlace (1200×630) |
 | `docs/logo.png` | Cabecera del README |
+| `docs/screenshots/*.png` | Capturas de la app con marco de dispositivo |
 
 Todos se generan con un solo script, para que sean reproducibles:
 
@@ -251,6 +258,20 @@ tablero de cuatro bloques limpio.
 > El favicon lleva `?v=2` en el `index.html` porque los navegadores cachean
 > los iconos de forma agresiva: sin el versionado, buena parte de los
 > usuarios seguiría viendo el icono anterior.
+
+### Capturas de pantalla
+
+Las imágenes de `docs/screenshots/` se toman automáticamente del navegador
+(con un Chrome headless), se les pone un marco de teléfono o de navegador y se
+componen en un carrusel:
+
+```bash
+flutter build web --release
+python scripts/make_screenshots.py
+```
+
+El carrusel `docs/screenshots/carrusel.png` (1200×1200) está pensado para
+acompañar la publicación en redes sociales.
 
 ---
 

@@ -16,6 +16,8 @@ el proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 - Meta tags de Open Graph y Twitter Card en `web/index.html`, con la imagen de
   vista previa.
 - Cabecera con el logo y enlace directo al juego en el README.
+- Capturas de pantalla de la app con marco de telefono y de navegador, mas un
+  carrusel 1200x1200 para redes. Se generan con `scripts/make_screenshots.py`.
 - Despliegue web automatico a Vercel con GitHub Actions: `vercel.json` con
   `buildCommand`, `outputDirectory`, rewrites y headers de cache; workflow
   `.github/workflows/deploy-web.yml` con jobs de test, produccion (main) y
@@ -25,7 +27,7 @@ el proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
   (`--no-web-resources-cdn`), sin depender de gstatic.com.
 - Documentacion del despliegue en el README, con las dos rutas para crear el
   proyecto de Vercel (CLI o dashboard) y donde encontrar cada secreto.
-- 84 jergas limeñas de 5 letras en el diccionario, todas de uso real en Lima
+- 74 jergas limeñas de 5 letras en el diccionario, todas de uso real en Lima
   y la costa central. Fuentes: DiPerú (Academia Peruana de la Lengua),
   "Peruanismos de Lima y la costa central" (108 términos), Wikilengua y
   Martha Hildebrandt.

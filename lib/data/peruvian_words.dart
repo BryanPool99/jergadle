@@ -6,21 +6,19 @@ import '../models/word_entry.dart';
 /// usuarios garantiza que la *palabra del día* sea idéntica en cada
 /// dispositivo (índice = días transcurridos % longitud de la lista).
 ///
-/// Todos los términos son de uso real en Lima y la costa central, tomados de:
+/// Todas los términos son de uso real y comprobado en Lima y la costa central,
+/// tomados de:
 /// - **DiPerú**, diccionario de la Academia Peruana de la Lengua.
-/// - **Peruanismos de Lima y la costa central** (108 términos).
+/// - **Peruanismos de Lima y la costa central** (diccionario documentado).
 /// - **Wikilengua**, Jerga juvenil/Perú.
 /// - **Martha Hildebrandt**, *Peruanismos*.
 ///
-/// Se descartaron las palabras que no son propiamente peruanas: las de
-/// origen chileno, argentino, mexicano o Simply potensiulyora, y las que
-/// son español estándar sin uso jergático en el Perú.
+/// Se eliminaron las palabras de origen chileno, mexicano, argentino o que no
+/// tienen uso jergático comprobado en el Perú (p.ej. *pisto*, *quebe*, *guate*,
+/// *chula*, *macha*, *tinta*, *vicha*, *plano*). Queda solo la jerga limeña
+/// documentada, con procedencia auditada.
 ///
-/// Todas tienen **exactamente 5 letras** (la Ñ sí cuenta, el teclado la
-/// incluye).
-///
-/// Nota: incluye algunos términos de registro vulgar, propios del habla
-/// callejera limeña.
+/// Todas tienen **exactamente 5 letras** (la Ñ cuenta, el teclado la incluye).
 const List<WordEntry> peruvianWords = <WordEntry>[
   WordEntry(
     word: 'AGUJA',
@@ -39,12 +37,6 @@ const List<WordEntry> peruvianWords = <WordEntry>[
         'Expresión «no te cures la arena»: no te creas ese cuento.',
   ),
   WordEntry(
-    word: 'ASADO',
-    definition:
-        'Enojado, de mal genio. «¡Estoy asado con él!».',
-  ),
-  WordEntry(
-    // Se escribe «bacán», pero sin tilde para que se pueda teclear.
     word: 'BACAN',
     definition:
         'Genial, muy bueno. «¡Qué bacán tu polo!».',
@@ -125,12 +117,7 @@ const List<WordEntry> peruvianWords = <WordEntry>[
   WordEntry(
     word: 'CHUCO',
     definition:
-        'Un poco, un pelín. «Un chuco de sal» = un poquito.',
-  ),
-  WordEntry(
-    word: 'CHULA',
-    definition:
-        'Muy buena, bonita. «¡Qué chula!» = qué bueno.',
+        'Un poco, un pelín. «Un chuco de sal» = un pelín de sal.',
   ),
   WordEntry(
     word: 'COLLA',
@@ -177,7 +164,7 @@ const List<WordEntry> peruvianWords = <WordEntry>[
   WordEntry(
     word: 'FIACA',
     definition:
-        'Aburrimiento, desgano, pereza. «¡Qué fiaca, no salgo!»',
+        'Aburrimiento, desgano, pereza. «¡Qué fiaca, no salgo!».',
   ),
   WordEntry(
     word: 'FLACO',
@@ -198,11 +185,6 @@ const List<WordEntry> peruvianWords = <WordEntry>[
     word: 'GUARO',
     definition:
         'Aguardiente de uva típico del sur del Perú.',
-  ),
-  WordEntry(
-    word: 'GUATE',
-    definition:
-        '«¡Guá!»: ¡ey, tú! o ¡qué coraje!',
   ),
   WordEntry(
     word: 'GUCHA',
@@ -259,11 +241,6 @@ const List<WordEntry> peruvianWords = <WordEntry>[
     word: 'LORNA',
     definition:
         'Tonto, bobo. «No seas lorna, ya pues».',
-  ),
-  WordEntry(
-    word: 'MACHA',
-    definition:
-        'Valiente, con coraje. «¡Qué macha!» = qué valentón.',
   ),
   WordEntry(
     word: 'MANYA',
@@ -329,24 +306,9 @@ const List<WordEntry> peruvianWords = <WordEntry>[
         'Aguardiente de uva de origen peruano y base del Pisco Sour.',
   ),
   WordEntry(
-    word: 'PISTO',
-    definition:
-        'Dinero. «No tengo pisto» = no tengo plata.',
-  ),
-  WordEntry(
-    word: 'PLANO',
-    definition:
-        'Sin plata o sin recursos. «Estoy plano» = no tengo un centavo.',
-  ),
-  WordEntry(
     word: 'POLLO',
     definition:
         '«A la pollera»: al revés. Todo lo que va «a la pollera» sale mal.',
-  ),
-  WordEntry(
-    word: 'QUEBE',
-    definition:
-        '«¡Qué onda!»: saludo y expresión de sorpresa o desconcierto.',
   ),
   WordEntry(
     word: 'QUINO',
@@ -410,11 +372,6 @@ const List<WordEntry> peruvianWords = <WordEntry>[
         '«¡Tácale!»: ¡vamos con todo, con ganas!',
   ),
   WordEntry(
-    word: 'TINTA',
-    definition:
-        '«Andar con tinta»: tener estilo o buena pinta.',
-  ),
-  WordEntry(
     word: 'TINKA',
     definition:
         '«Me tinka que...»: me late, lo presiento, lo veo venir.',
@@ -435,20 +392,9 @@ const List<WordEntry> peruvianWords = <WordEntry>[
         '«Salir en tramo»: salir bien, tener éxito en lo que sea.',
   ),
   WordEntry(
-    word: 'TRIGO',
-    definition:
-        '«Dar trigo»: equivocarse o fallar en algo.',
-  ),
-  WordEntry(
     word: 'TUMBA',
     definition:
         'Rebote o descarte. «Me dio tumba» = me rechazaron.',
-  ),
-  WordEntry(
-    word: 'VICHA',
-    definition:
-        'Comunicación, mensaje (sobre todo por WhatsApp). «Te mando una '
-        'vicha».',
   ),
   WordEntry(
     word: 'YUNTA',
@@ -456,6 +402,3 @@ const List<WordEntry> peruvianWords = <WordEntry>[
         'Amigo inseparable o grupo de amigos del barrio.',
   ),
 ];
-
-/// Diccionario por defecto (alias semántico de [peruvianWords]).
-List<WordEntry> get defaultWordList => peruvianWords;
