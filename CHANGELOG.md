@@ -9,6 +9,14 @@ el proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ### Anadido
 
+- Despliegue web automatico a Vercel con GitHub Actions: `vercel.json` con
+  `buildCommand`, `outputDirectory`, rewrites y headers de cache; workflow
+  `.github/workflows/deploy-web.yml` con jobs de test, produccion (main) y
+  preview (develop y PRs); y el script `scripts/deploy-web.sh` para desplegar
+  desde el equipo.
+- El motor CanvasKit se sirve desde el propio dominio
+  (`--no-web-resources-cdn`), sin depender de gstatic.com.
+- Documentacion del despliegue en el README.
 - 84 jergas limeñas de 5 letras en el diccionario, todas de uso real en Lima
   y la costa central. Fuentes: DiPerú (Academia Peruana de la Lengua),
   "Peruanismos de Lima y la costa central" (108 términos), Wikilengua y
