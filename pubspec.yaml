@@ -3,7 +3,7 @@ description: "Jergadle - Wordle peruano. Adivina las jergas del PerÃº de 5 let
 publish_to: 'none'
 
 # version: major.minor.patch+build (SemVer, ver CHANGELOG.md)
-version: 0.3.0+4
+version: 0.3.1+5
 
 environment:
   sdk: ^3.13.5
@@ -33,6 +33,7 @@ flutter:
 
   assets:
     - assets/audio/
+
 
 
 
