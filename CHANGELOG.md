@@ -16,6 +16,8 @@ el proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 - Meta tags de Open Graph y Twitter Card en `web/index.html`, con la imagen de
   vista previa.
 - Cabecera con el logo y enlace directo al juego en el README.
+- Capturas de pantalla de la app con marco de telefono y de navegador, mas un
+  carrusel 1200x1200 para redes. Se generan con `scripts/make_screenshots.py`.
 - Despliegue web automatico a Vercel con GitHub Actions: `vercel.json` con
   `buildCommand`, `outputDirectory`, rewrites y headers de cache; workflow
   `.github/workflows/deploy-web.yml` con jobs de test, produccion (main) y

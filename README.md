@@ -15,6 +15,12 @@
   <a href="#cómo-ejecutar">📱 Instalar en Android</a>
 </p>
 
+<p align="center">
+  <img src="docs/screenshots/1_tablero.png" alt="Tablero de Jergadle" width="240">
+  <img src="docs/screenshots/4_victoria.png" alt="Modal de victoria" width="240">
+  <img src="docs/screenshots/2_inicio.png" alt="Pantalla de inicio" width="240">
+</p>
+
 ---
 
 - 🇵🇪 84 jergas limeñas de 5 letras en el diccionario local
@@ -237,6 +243,7 @@ colores de evaluación y la "J" en el color de acento.
 | `android/.../mipmap-*/ic_launcher.png` | Lanzador de Android (5 densidades) |
 | `web/og-image.png` | Vista previa al compartir el enlace (1200×630) |
 | `docs/logo.png` | Cabecera del README |
+| `docs/screenshots/*.png` | Capturas de la app con marco de dispositivo |
 
 Todos se generan con un solo script, para que sean reproducibles:
 
@@ -251,6 +258,20 @@ tablero de cuatro bloques limpio.
 > El favicon lleva `?v=2` en el `index.html` porque los navegadores cachean
 > los iconos de forma agresiva: sin el versionado, buena parte de los
 > usuarios seguiría viendo el icono anterior.
+
+### Capturas de pantalla
+
+Las imágenes de `docs/screenshots/` se toman automáticamente del navegador
+(con un Chrome headless), se les pone un marco de teléfono o de navegador y se
+componen en un carrusel:
+
+```bash
+flutter build web --release
+python scripts/make_screenshots.py
+```
+
+El carrusel `docs/screenshots/carrusel.png` (1200×1200) está pensado para
+acompañar la publicación en redes sociales.
 
 ---
 
