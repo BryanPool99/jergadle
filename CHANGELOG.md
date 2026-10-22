@@ -9,10 +9,23 @@ el proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ### Anadido
 
+- Despliegue web automatico a Vercel con GitHub Actions: `vercel.json` con
+  `buildCommand`, `outputDirectory`, rewrites y headers de cache; workflow
+  `.github/workflows/deploy-web.yml` con jobs de test, produccion (main) y
+  preview (develop y PRs); y el script `scripts/deploy-web.sh` para desplegar
+  desde el equipo.
+- El motor CanvasKit se sirve desde el propio dominio
+  (`--no-web-resources-cdn`), sin depender de gstatic.com.
+- Documentacion del despliegue en el README, con las dos rutas para crear el
+  proyecto de Vercel (CLI o dashboard) y donde encontrar cada secreto.
 - 84 jergas limeñas de 5 letras en el diccionario, todas de uso real en Lima
   y la costa central. Fuentes: DiPerú (Academia Peruana de la Lengua),
   "Peruanismos de Lima y la costa central" (108 términos), Wikilengua y
   Martha Hildebrandt.
+- `"git": { "deploymentEnabled": false }` en `vercel.json`: evita el doble
+  despliegue (Vercel + GitHub Actions) en el mismo push.
+- El token de Vercel se pasa por variable de entorno y no por `--token`, que
+  quedaba visible en el listado de procesos del runner.
 - Nuevas jergas: AGUJA, BROER, CRUDA, FICHO, GUCHA, GUITA, JONCA, LLECA,
   LOMPA, LORNA, MISIO, ROCHE, SIMON, SONSO, TABAS, TASAR, TROME y YUNTA.
 - Test que valida letra por letra que cada palabra se puede teclear con el
