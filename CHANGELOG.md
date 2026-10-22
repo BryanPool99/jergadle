@@ -7,6 +7,19 @@ el proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [No publicado]
 
+### Anadido
+
+- 82 jergas peruanas autenticas en el diccionario (antes 67, con varias de
+  origen chileno o argentino). Fuentes: DiPeru (Academia Peruana de la
+  Lengua), Wikilengua y el diccionario de Gino Bosio.
+- El modal final muestra el cuadro de emojis del resultado, sin necesidad de
+  abrir la hoja de compartir.
+
+### Corregido
+
+- La hoja de compartir se desbordaba por debajo del boton "Copiar resultado"
+  en pantallas bajas: ahora es desplazable y ocupa hasta el 85% del alto.
+
 ## [0.2.0] - 2026-10-21
 
 ### Anadido

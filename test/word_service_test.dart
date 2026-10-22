@@ -4,14 +4,31 @@ import 'package:jergadle/services/word_service.dart';
 
 void main() {
   group('Diccionario de jergas', () {
-    test('tiene al menos 50 palabras', () {
-      expect(peruvianWords.length, greaterThanOrEqualTo(50));
+    test('tiene al menos 70 palabras', () {
+      expect(peruvianWords.length, greaterThanOrEqualTo(70));
     });
 
     test('todas las palabras tienen 5 letras y definición', () {
       for (final entry in peruvianWords) {
         expect(entry.normalized.length, 5, reason: 'Palabra inválida: ${entry.word}');
+        // Sólo mayúsculas ASCII: la Ñ y los acentos romperían el teclado.
+        expect(
+          entry.normalized,
+          matches(RegExp(r'^[A-Z]{5}$')),
+          reason: 'Palabra inválida: ${entry.word}',
+        );
         expect(entry.definition.trim(), isNotEmpty, reason: 'Sin definición: ${entry.word}');
+      }
+    });
+
+    test('las definiciones no tienen caracteres corruptos', () {
+      for (final entry in peruvianWords) {
+        // CJK, cirílico, etc. Provienen de un pegado con mala codificación.
+        expect(
+          entry.definition,
+          isNot(matches(RegExp(r'[\u4e00-\u9fff\u0400-\u04ff\uac00-\ud7ff]'))),
+          reason: 'Definición con caracteres raros: ${entry.word}',
+        );
       }
     });
 
