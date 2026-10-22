@@ -210,6 +210,88 @@ cada letra exista en el teclado.
 
 ---
 
+## Despliegue web (Vercel)
+
+La app web es un sitio estático: Vercel sólo sirve los archivos de
+`build/web`. El despliegue está automatizado con **GitHub Actions** para no
+gastar minutos de build de Vercel y aprovechar la caché del SDK de Flutter.
+
+### 1. Crear el proyecto en Vercel
+
+1. Entra en [vercel.com/new](https://vercel.com/new) e importa el repositorio
+   `BryanPool99/jergadle`.
+2. **Framework Preset:** `Other`.
+3. **Build Command:** `flutter build web --release --no-web-resources-cdn`
+4. **Output Directory:** `build/web`
+5. Despliega una vez. Tu URL será `jergadle.vercel.app` (si el nombre está
+   libre; si no, `jergadle-xxx.vercel.app`, cámbiala en *Settings → Domains*).
+
+> Vercel no tiene Flutter en su imagen de build, pero **no pasa nada**: el
+> build real lo hace GitHub Actions y a Vercel solo se le sube el resultado.
+
+### 2. Secretos en GitHub
+
+En *Settings → Secrets and variables → Actions* crea:
+
+| Secreto | Dónde se saca |
+|---------|---------------|
+| `VERCEL_TOKEN` | Vercel → *Account Settings → Tokens* → *Create Token* (scope `vercel.com`, Full Access) |
+| `VERCEL_ORG_ID` | Vercel → *Settings → General → ID* (o el `orgId` de `.vercel/project.json`) |
+| `VERCEL_PROJECT_ID` | Vercel → *Settings → General → Project ID* (o el `projectId` de `.vercel/project.json`) |
+
+### 3. Qué hace el workflow
+
+`.github/workflows/deploy-web.yml` tiene tres trabajos:
+
+| Job | Cuándo corre | Qué hace |
+|-----|--------------|----------|
+| `test` | siempre | `flutter analyze` + `flutter test`. **Ninguna versión se despliega si falla.** |
+| `deploy-production` | push a `main` | Compila y despliega a producción (`jergadle.vercel.app`) |
+| `deploy-preview` | push a `develop` o PR | Compila y despliega una URL de preview |
+
+Cada despliegue usa el flujo oficial de Vercel:
+
+```
+vercel pull              ->  descarga .vercel/project.json
+vercel build             ->  ejecuta el buildCommand y deja .vercel/output
+vercel deploy --prebuilt --prod
+```
+
+### 4. Despliegue manual
+
+```bash
+npm install --global vercel@latest
+vercel login
+bash scripts/deploy-web.sh --prod
+```
+
+### Detalles importantes de la configuración
+
+`vercel.json` define lo que hace que la app funcione bien:
+
+- **`--no-web-resources-cdn`**: sin este flag, Flutter descarga el motor
+  CanvasKit desde `gstatic.com`. Con él, el motor se sirve desde el mismo
+  dominio: más rápido y sin depender de Google (muy útil en redes de Perú).
+- **`Cache-Control`**: `main.dart.js` tiene nombre fijo, así que **no puede**
+  cachearse un año o los usuarios se quedarían con la versión vieja para
+  siempre. Va con `max-age=0, must-revalidate`. En cambio `assets/` y
+  `canvaskit/` sí se cachean un año (`immutable`), porque no cambian.
+- **`Content-Type: application/wasm`**: necesario para que el navegador
+  compile el motor con WebAssembly.
+- **`rewrites`**: todo cae en `index.html`. Vercel sirve primero los archivos
+  del disco, así que los assets no se rompen.
+
+### Service worker y PWA
+
+El service worker de Flutter **se mantiene activo**: la app se puede instalar
+como PWA y el juego funciona sin conexión (útil para la jerga del día).
+Flutter versiona el `flutter_service_worker.js` y, gracias a los headers
+anteriores, una actualización se descarga en la visita siguiente. Si prefieres
+que la app nunca se cachee, quita el `flutter_service_worker.js` del build (la
+app sigue funcionando, solo pierde el modo offline).
+
+---
+
 ## Licencia
 
 MIT
