@@ -4,20 +4,34 @@ import 'package:jergadle/services/word_service.dart';
 
 void main() {
   group('Diccionario de jergas', () {
-    test('tiene al menos 70 palabras', () {
-      expect(peruvianWords.length, greaterThanOrEqualTo(70));
+    test('tiene al menos 80 palabras', () {
+      expect(peruvianWords.length, greaterThanOrEqualTo(80));
     });
 
     test('todas las palabras tienen 5 letras y definición', () {
       for (final entry in peruvianWords) {
         expect(entry.normalized.length, 5, reason: 'Palabra inválida: ${entry.word}');
-        // Sólo mayúsculas ASCII: la Ñ y los acentos romperían el teclado.
+        // Mayúsculas: el juego sólo acepta letras del teclado.
         expect(
           entry.normalized,
-          matches(RegExp(r'^[A-Z]{5}$')),
+          matches(RegExp(r'^[A-ZÑ]{5}$')),
           reason: 'Palabra inválida: ${entry.word}',
         );
         expect(entry.definition.trim(), isNotEmpty, reason: 'Sin definición: ${entry.word}');
+      }
+    });
+
+    test('cada palabra se puede teclear con el teclado virtual', () {
+      // Las teclas disponibles en el teclado de la app.
+      const available = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ';
+      for (final entry in peruvianWords) {
+        for (final letter in entry.normalized.split('')) {
+          expect(
+            available.contains(letter),
+            isTrue,
+            reason: 'La letra "$letter" de ${entry.word} no está en el teclado',
+          );
+        }
       }
     });
 
