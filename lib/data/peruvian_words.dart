@@ -6,25 +6,32 @@ import '../models/word_entry.dart';
 /// usuarios garantiza que la *palabra del día* sea idéntica en cada
 /// dispositivo (índice = días transcurridos % longitud de la lista).
 ///
+/// Los términos proceden del uso real limeño (jerga juvenil, peruanos
+/// registrados por la Academia Peruana de la Lengua en DiPerú y el
+/// diccionario de Gino Bosio). **Todas tienen exactamente 5 letras**.
+///
 /// Para extender el juego basta con añadir entradas al final de la lista
 /// (manteniendo 5 letras) y subir la versión del diccionario.
+///
+/// Nota: incluye algunos términos de registro vulgar, propios del habla
+/// callejera limeña.
 const List<WordEntry> peruvianWords = <WordEntry>[
+  // --- Jerga general limeña ---
   WordEntry(
     word: 'CAUSA',
     definition:
-        'Comida ayahuchana a base de papa y ají amarillo. Como vocativo, '
-        '«¡causa!» es una forma cariñosa de llamar a un amigo.',
+        'Amigo. «¡Mi causa!» es el vocativo más usado en Lima. También es '
+        'la comida ayahuchana de papa y ají amarillo.',
   ),
   WordEntry(
     word: 'CHELA',
     definition:
-        'Cerveza light. Por extensión, también el candado de una puerta.',
+        'Cerveza light. Por extensión, el candado de una puerta.',
   ),
   WordEntry(
     word: 'PALTA',
     definition:
-        'Aguacate. En Perú es fundamental en la cocina y en el «paltear», '
-        'golpear a alguien con una palta.',
+        'Aguacate. En el «paltear» se golpea a alguien con una palta.',
   ),
   WordEntry(
     word: 'MONSE',
@@ -42,15 +49,15 @@ const List<WordEntry> peruvianWords = <WordEntry>[
         'Valiente, con coraje y con garra. «¡Qué macha!» = qué valentón.',
   ),
   WordEntry(
-    word: 'PLUMA',
+    word: 'MACHO',
     definition:
-        'Elegante, con estilo. «Anda con plumas» = viste bien.',
+        '«Muy macho»: cuando alguien se planta con valentía o se hace el '
+        'valiente.',
   ),
   WordEntry(
     word: 'TARDE',
     definition:
-        'Saludo informal: «¡Tarde!». Como adjetivo significa malo o fuera de '
-        'lugar.',
+        'Saludo informal: «¡Tarde!». Como adjetivo, malo o fuera de lugar.',
   ),
   WordEntry(
     word: 'FIACA',
@@ -136,12 +143,7 @@ const List<WordEntry> peruvianWords = <WordEntry>[
   WordEntry(
     word: 'QUEBE',
     definition:
-        '«¡Qué onda!»: saludo y expresión de sorpresa o de desconcierto.',
-  ),
-  WordEntry(
-    word: 'CHULO',
-    definition:
-        'Muy bueno, bacán. «¡Qué chulo!» = qué bonito.',
+        '«¡Qué onda!»: saludo y expresión de sorpresa o desconcierto.',
   ),
   WordEntry(
     word: 'FECHA',
@@ -167,16 +169,6 @@ const List<WordEntry> peruvianWords = <WordEntry>[
     word: 'CHUCO',
     definition:
         'Un poco, un pelín. «Un chuco de sal» = un poquito.',
-  ),
-  WordEntry(
-    word: 'TILIN',
-    definition:
-        '«¡Tilín!»: me gusta, de acuerdo, me parece bien.',
-  ),
-  WordEntry(
-    word: 'GUATE',
-    definition:
-        '«¡Guá!»: ¡ey, tú! o ¡qué coraje!',
   ),
   WordEntry(
     word: 'TAQUE',
@@ -219,12 +211,6 @@ const List<WordEntry> peruvianWords = <WordEntry>[
         'Amigo, compadre, partner. «¡Qué más, cumpa!»',
   ),
   WordEntry(
-    word: 'FATAL',
-    definition:
-        '«¡Qué fatal!»: expresión que celebra un buenos resultado con '
-        'entusiasmo.',
-  ),
-  WordEntry(
     word: 'CHULA',
     definition:
         'Muy buena, bonita. «¡Qué chula!» = qué bueno.',
@@ -235,24 +221,9 @@ const List<WordEntry> peruvianWords = <WordEntry>[
         'Calvo. «¡Pelón!» = sin una gota de pelo.',
   ),
   WordEntry(
-    word: 'SUAVE',
-    definition:
-        '«¡Qué suave!»: expresión de gusto, agradable y sin concreto.',
-  ),
-  WordEntry(
-    word: 'BRAVO',
-    definition:
-        '«¡Qué bravo!»: excelente, peligrosamente bueno.',
-  ),
-  WordEntry(
     word: 'LETRA',
     definition:
         '«Tener letra»: tener descaro, falta de vergüenza.',
-  ),
-  WordEntry(
-    word: 'BOLSA',
-    definition:
-        '«Estar en la bolsa»: tener el puesto asegurado.',
   ),
   WordEntry(
     word: 'JALAR',
@@ -262,13 +233,8 @@ const List<WordEntry> peruvianWords = <WordEntry>[
   WordEntry(
     word: 'VICHA',
     definition:
-        'Comunicación, mensaje (por WhatsApp sobre todo). «Te mando una '
+        'Comunicación, mensaje (sobre todo por WhatsApp). «Te mando una '
         'vicha».',
-  ),
-  WordEntry(
-    word: 'TRUJO',
-    definition:
-        '«Estar en el trujo»: estar enredado, en un lío.',
   ),
   WordEntry(
     word: 'CHOLO',
@@ -281,55 +247,103 @@ const List<WordEntry> peruvianWords = <WordEntry>[
         'Expresión de fastidio o sorpresa: «¡Chota!» = ¡qué lata!',
   ),
   WordEntry(
-    word: 'BACÁN',
+    word: 'GUATE',
     definition:
-        'Muy bueno, semiconductor de moda. «¡Qué bacán!» = qué bueno.',
-  ),
-  WordEntry(
-    word: 'PAILA',
-    definition:
-        'Sano, con buena pinta. «¡Qué paila!» = qué bien.',
-  ),
-  WordEntry(
-    word: 'GREÑA',
-    definition:
-        'Pelear. «¡Dame grena!» = ¡pelea!',
-  ),
-  WordEntry(
-    word: 'CHUPA',
-    definition:
-        'Chupete. Como jerga, «ser chupa» es ser muy joven o muy Canalla.',
-  ),
-  WordEntry(
-    word: 'TRUCO',
-    definition:
-        'Apaño, recurso rápido para salir del paso. «Sabe el truco».',
-  ),
-  WordEntry(
-    word: 'LIMON',
-    definition:
-        'Fruto ácido. «Aguantar el limón» = aguantar una situación difícil.',
-  ),
-  WordEntry(
-    word: 'PIÑON',
-    definition:
-        'Semilla del pino, usada en la cocina peruana. También «dar piñón» '
-        'es poner difícil a alguien.',
-  ),
-  WordEntry(
-    word: 'SANTO',
-    definition:
-        '«¡Ay, santo!»: expresión de sorpresa o fastidio. «¡Santo!».',
+        '«¡Guá!»: ¡ey, tú! o ¡qué coraje!',
   ),
   WordEntry(
     word: 'BOMBA',
     definition:
-        '«Ser una bomba»: ser muy guapo o muy atractivo.',
+        '«Estar en una bomba»: estar en una gran borrachera.',
   ),
   WordEntry(
     word: 'PILAS',
     definition:
-        '«A las pilas»: rápido, con energía. «¡Ponte las pilas!»',
+        '«Ser pilas»: tener mucha energía y ser proactivo. «¡Ponte las '
+        'pilas!»',
+  ),
+  WordEntry(
+    word: 'TAIFA',
+    definition:
+        '«Taifá»: muchísimo, en gran cantidad. «Está bien taifá».',
+  ),
+  WordEntry(
+    word: 'QUINO',
+    definition:
+        'Fiesta, joda, rave. «El sábado va a haber quino en mi barrio».',
+  ),
+  WordEntry(
+    word: 'TINKA',
+    definition:
+        '«Me tinka que...»: me late, lo presiento, lo veo venir.',
+  ),
+  WordEntry(
+    word: 'BAMBA',
+    definition:
+        'Falso, falsificado, que no es original. «Zapatos bamba».',
+  ),
+  WordEntry(
+    word: 'COMBI',
+    definition:
+        'Furgón o combi con asientos y espacio para carga. '
+        '«Vamos en combi al norte».',
+  ),
+  WordEntry(
+    word: 'GERMA',
+    definition:
+        'Novia o pareja. «¿Dónde está tu germa?»',
+  ),
+  WordEntry(
+    word: 'HABLA',
+    definition:
+        'Hola. «¡Habla!» es el saludo limeño de siempre.',
+  ),
+  WordEntry(
+    word: 'TALCO',
+    definition:
+        'Cocaína. Se usa al hablar en clave en la calle.',
+  ),
+  WordEntry(
+    word: 'TARRO',
+    definition:
+        'Culo, poto. «¡Tarro!», de forma cariñosa o de reproche.',
+  ),
+  WordEntry(
+    word: 'PICHI',
+    definition:
+        'Orina. «Voy a pichar» = voy al baño.',
+  ),
+  WordEntry(
+    word: 'PICON',
+    definition:
+        'El que no pierde ni se rinde. «Eres un picón, nunca te das por '
+        'vencido».',
+  ),
+  WordEntry(
+    word: 'CACHO',
+    definition:
+        'Torpe, inútil para algo. «Eres un cacho para las maths».',
+  ),
+  WordEntry(
+    word: 'BICHO',
+    definition:
+        'Bicho. Como insulto: persona rara o que se porta mal.',
+  ),
+  WordEntry(
+    word: 'CHOLA',
+    definition:
+        'Contrabandista. «La chola del puerto» es la que vende sin '
+        'licencia.',
+  ),
+  WordEntry(
+    word: 'CACHI',
+    definition:
+        'Culo. «¡Cachi!», en tono de reproche o de cariño.',
+  ),
+  WordEntry(
+    word: 'TRAMO',
+    definition:
+        '«Salir en tramo»: salir bien, tener éxito en lo que sea.',
   ),
   WordEntry(
     word: 'TUMBA',
@@ -337,19 +351,94 @@ const List<WordEntry> peruvianWords = <WordEntry>[
         'Rebote o descarte. «Me dio tumba» = me rechazaron.',
   ),
   WordEntry(
-    word: 'FUEGO',
+    word: 'PLUMA',
     definition:
-        '«Ser fuego»: muy atractivo o con mucha energía.',
+        'Presumir, lucirse. «¿Por qué echas la pluma?».',
   ),
   WordEntry(
-    word: 'COMPA',
+    word: 'AMPAY',
     definition:
-        'Compadre, amigo de confianza. «¡Hola, compa!»',
+        'Sorprender a alguien en una situación incómoda o vergonzosa. '
+        '«Lo ampayaron en la fiesta».',
   ),
   WordEntry(
-    word: 'CHUZA',
+    word: 'ASADO',
     definition:
-        'Grosería, mala educación. «No seas chuza».',
+        'Enojado, de mal genio. «¡Estoy asado con él!».',
+  ),
+  WordEntry(
+    word: 'CUZCO',
+    definition:
+        '«Hacerse el cusqueño»: hacerse el que no entiende nada para que '
+        'otro te explique.',
+  ),
+  WordEntry(
+    word: 'HIELO',
+    definition:
+        '«Estar de hielo»: indiferente, frío con alguien.',
+  ),
+  WordEntry(
+    word: 'JERGA',
+    definition:
+        'La forma de hablar propia de un grupo. «Su jerga no se '
+        'entiende».',
+  ),
+  WordEntry(
+    word: 'MANYA',
+    definition:
+        '¿Entiendes? «¿Manyas?» es la forma limeña de preguntar si te han '
+        'explicado.',
+  ),
+  WordEntry(
+    word: 'CHAVO',
+    definition:
+        'Chico, joven. Viene del Chavo del 8 y se usa a diario en Lima.',
+  ),
+  WordEntry(
+    word: 'PANAS',
+    definition:
+        'Amigos, conocidos. «Sal con mis panas» = sal con mis amigos.',
+  ),
+  WordEntry(
+    word: 'CUORE',
+    definition:
+        'Corazón. Anglicismo que en Lima significa «te quiero».',
+  ),
+  WordEntry(
+    word: 'TINTA',
+    definition:
+        '«Andar con tinta»: tener estilo o buena pinta.',
+  ),
+  WordEntry(
+    word: 'LIMON',
+    definition:
+        '«Aguantar el limón»: aguantar una situación difícil.',
+  ),
+  WordEntry(
+    word: 'PINON',
+    definition:
+        'Semilla del pino, usada en la cocina peruana. «Dar piñón» es '
+        'ponerle difícil a alguien.',
+  ),
+  WordEntry(
+    word: 'TILIN',
+    definition:
+        '«¡Tilín!»: me gusta, de acuerdo, me parece bien.',
+  ),
+  WordEntry(
+    word: 'FATAL',
+    definition:
+        '«¡Qué fatal!»: se usa para celebrar un buen resultado, con ironyía.',
+  ),
+  WordEntry(
+    word: 'BOLSA',
+    definition:
+        '«Estar en la bolsa»: tener el puesto asegurado.',
+  ),
+  WordEntry(
+    word: 'CHATO',
+    definition:
+        'El billete de 10 soles. «¿Me das un chato?».',
   ),
 ];
 

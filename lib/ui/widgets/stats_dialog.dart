@@ -133,6 +133,10 @@ class StatsDialog extends StatelessWidget {
               const SizedBox(height: 16),
               _Distribution(distribution: stats.guessDistribution),
               const SizedBox(height: 20),
+              if (emojiGrid.isNotEmpty) ...<Widget>[
+                _EmojiPreview(emojiGrid: emojiGrid),
+                const SizedBox(height: 16),
+              ],
               if (wordEntry != null) ...<Widget>[
                 Container(
                   padding: const EdgeInsets.all(14),
@@ -188,6 +192,50 @@ class StatsDialog extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Vista previa del cuadro de emojis con el resultado de la partida.
+///
+/// Se muestra en el modal final para que el jugador vea lo que va a
+/// compartir sin tener que abrir la hoja de compartir.
+class _EmojiPreview extends StatelessWidget {
+  const _EmojiPreview({required this.emojiGrid});
+
+  final String emojiGrid;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Text(
+          'TU RESULTADO',
+          style: TextStyle(
+            color: theme.accent,
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.2,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: theme.tileEmpty,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: theme.tileEmptyBorder),
+          ),
+          child: Text(
+            emojiGrid,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 18, height: 1.5),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -298,74 +346,86 @@ Future<void> showShareSheet(
   String emojiGrid = '',
 ]) {
   final theme = Theme.of(context);
+  final media = MediaQuery.of(context);
+
   return showModalBottomSheet<void>(
     context: context,
     backgroundColor: Colors.transparent,
+    // Permite que la hoja ocupe toda la pantalla si hace falta; sin esto el
+    // alto por defecto (9/16) desborda cuando hay muchos intentos.
+    isScrollControlled: true,
+    constraints: BoxConstraints(
+      maxHeight: media.size.height * 0.85,
+    ),
     builder: (BuildContext sheetContext) => SafeArea(
+      top: false,
       child: Container(
         decoration: BoxDecoration(
           color: theme.surface,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
         ),
         padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Text(
-              'TU RESULTADO',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 2,
-                color: theme.accent,
-              ),
-            ),
-            const SizedBox(height: 14),
-            if (emojiGrid.isNotEmpty)
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: theme.tileEmpty,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: theme.tileEmptyBorder),
-                ),
-                child: Text(
-                  emojiGrid,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 18, height: 1.5),
+        // Si aun así no cabe (pantallas muy bajas), se puede desplazar.
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Text(
+                'TU RESULTADO',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 2,
+                  color: theme.accent,
                 ),
               ),
-            if (emojiGrid.isNotEmpty) const SizedBox(height: 14),
-            Text(
-              text,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 15, height: 1.5),
-            ),
-            const SizedBox(height: 20),
-            FilledButton.icon(
-              onPressed: () async {
-                await Clipboard.setData(ClipboardData(text: text));
-                if (sheetContext.mounted) Navigator.of(sheetContext).pop();
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Resultado copiado al portapapeles'),
-                    ),
-                  );
-                }
-              },
-              icon: const Icon(Icons.copy, size: 18),
-              label: const Text('Copiar resultado'),
-            ),
-            const SizedBox(height: 8),
-            TextButton(
-              onPressed: () => Navigator.of(sheetContext).pop(),
-              child: const Text('Cerrar'),
-            ),
-          ],
+              const SizedBox(height: 14),
+              if (emojiGrid.isNotEmpty)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: theme.tileEmpty,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: theme.tileEmptyBorder),
+                  ),
+                  child: Text(
+                    emojiGrid,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 18, height: 1.5),
+                  ),
+                ),
+              if (emojiGrid.isNotEmpty) const SizedBox(height: 14),
+              Text(
+                text,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 15, height: 1.5),
+              ),
+              const SizedBox(height: 20),
+              FilledButton.icon(
+                onPressed: () async {
+                  await Clipboard.setData(ClipboardData(text: text));
+                  if (sheetContext.mounted) Navigator.of(sheetContext).pop();
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Resultado copiado al portapapeles'),
+                      ),
+                    );
+                  }
+                },
+                icon: const Icon(Icons.copy, size: 18),
+                label: const Text('Copiar resultado'),
+              ),
+              const SizedBox(height: 8),
+              TextButton(
+                onPressed: () => Navigator.of(sheetContext).pop(),
+                child: const Text('Cerrar'),
+              ),
+            ],
+          ),
         ),
       ),
     ),
