@@ -32,14 +32,18 @@ extension JergadleTestHelpers on WidgetTester {
   /// Escribe una palabra pulsando las teclas del teclado virtual.
   Future<void> typeWord(String word) async {
     for (final letter in word.split('')) {
-      await tap(find.byKey(ValueKey<String>('key-$letter')));
+      final key = find.byKey(ValueKey<String>('key-$letter'));
+      await ensureVisible(key);
+      await tap(key);
       await pump();
     }
   }
 
   /// Pulsa ENTER y espera a que se estabilice la pantalla.
   Future<void> pressEnter() async {
-    await tap(find.byKey(const ValueKey<String>('key-ENTER')));
+    final key = find.byKey(const ValueKey<String>('key-ENTER'));
+    await ensureVisible(key);
+    await tap(key);
     await settle();
   }
 
