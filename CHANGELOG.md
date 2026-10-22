@@ -9,6 +9,13 @@ el proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ### Anadido
 
+- Identidad visual completa: favicon propio (el tablero 2x2 del juego), iconos
+  PWA y adaptativos de Android, lanzador de Android en sus 5 densidades, logo
+  para el README e imagen de vista previa (og-image) para compartir el enlace.
+- `scripts/generate_icons.py` regenera todos los iconos de forma reproducible.
+- Meta tags de Open Graph y Twitter Card en `web/index.html`, con la imagen de
+  vista previa.
+- Cabecera con el logo y enlace directo al juego en el README.
 - Despliegue web automatico a Vercel con GitHub Actions: `vercel.json` con
   `buildCommand`, `outputDirectory`, rewrites y headers de cache; workflow
   `.github/workflows/deploy-web.yml` con jobs de test, produccion (main) y

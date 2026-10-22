@@ -18,8 +18,18 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="Jergadle - Wordle peruano. Adivina las jergas del Peru en 5 letras.">
+  <meta name="description" content="Jergadle - Wordle peruano. Adivina las jergas limeñas de 5 letras y descubre qué significa cada una.">
   <meta name="theme-color" content="#121213">
+
+  <!-- Vista previa al compartir el enlace (WhatsApp, X, LinkedIn) -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Jergadle - Wordle peruano">
+  <meta property="og:description" content="Adivina la jerga peruana del día. 84 jergas limeñas de 5 letras, 6 intentos y el significado de cada una.">
+  <meta property="og:image" content="og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Jergadle - Wordle peruano">
+  <meta name="twitter:description" content="Adivina la jerga peruana del día. 84 jergas limeñas de 5 letras.">
+  <meta name="twitter:image" content="og-image.png">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -27,8 +37,12 @@
   <meta name="apple-mobile-web-app-title" content="Jergadle">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <!--
+    Favicon. La version (?v=2) evita la cache agresiva de los navegadores:
+    sin ella, gran parte de los usuarios seguiria viendo el icono anterior.
+  -->
+  <link rel="icon" type="image/png" href="favicon.png?v=2"/>
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/Icon-192.png?v=2"/>
 
   <title>Jergadle - Wordle peruano</title>
   <link rel="manifest" href="manifest.json">

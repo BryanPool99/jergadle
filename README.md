@@ -1,7 +1,21 @@
 # Jergadle
 
-**Wordle peruano.** Adivina la jerga del día en 5 letras, todos los días, desde
-tu celular o tu navegador.
+<p align="center">
+  <img src="docs/logo.png" alt="Jergadle" width="420">
+</p>
+
+<p align="center">
+  <b>Wordle peruano.</b> Adivina la jerga del día en 5 letras, todos los días,<br>
+  desde tu celular o tu navegador.
+</p>
+
+<p align="center">
+  <a href="https://jergadle.vercel.app/" target="_blank">▶️ Jugar en el navegador</a>
+  ·
+  <a href="#cómo-ejecutar">📱 Instalar en Android</a>
+</p>
+
+---
 
 - 🇵🇪 84 jergas limeñas de 5 letras en el diccionario local
 - 🎯 6 intentos por día, misma palabra para todos (sin backend)
@@ -207,6 +221,36 @@ WordEntry(
 El test `word_service_test.dart` valida que todas tengan 5 letras, que no
 haya duplicados, que las definiciones no contengan caracteres corruptos y que
 cada letra exista en el teclado.
+
+---
+
+## Identidad visual
+
+El logotipo es el propio tablero del juego: un cuadro 2×2 con los tres
+colores de evaluación y la "J" en el color de acento.
+
+| Archivo | Uso |
+|---------|-----|
+| `web/favicon.png` | Pestaña del navegador (32×32) |
+| `web/icons/Icon-192.png`, `Icon-512.png` | PWA e `apple-touch-icon` de iOS |
+| `web/icons/Icon-maskable-*.png` | Iconos adaptativos de Android (zona segura) |
+| `android/.../mipmap-*/ic_launcher.png` | Lanzador de Android (5 densidades) |
+| `web/og-image.png` | Vista previa al compartir el enlace (1200×630) |
+| `docs/logo.png` | Cabecera del README |
+
+Todos se generan con un solo script, para que sean reproducibles:
+
+```bash
+python scripts/generate_icons.py
+```
+
+Requiere `Pillow` (`pip install pillow`). La "J" sólo se dibuja cuando la
+celda mide 44 px o más, de modo que el favicon de 32 px se queda en un
+tablero de cuatro bloques limpio.
+
+> El favicon lleva `?v=2` en el `index.html` porque los navegadores cachean
+> los iconos de forma agresiva: sin el versionado, buena parte de los
+> usuarios seguiría viendo el icono anterior.
 
 ---
 
