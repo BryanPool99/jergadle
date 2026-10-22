@@ -23,7 +23,7 @@
 
 ---
 
-- 🇵🇪 84 jergas limeñas de 5 letras en el diccionario local
+- 🇵🇪 74 jergas limeñas de 5 letras en el diccionario local
 - 🎯 6 intentos por día, misma palabra para todos (sin backend)
 - 🔥 Rachas diarias y mejor racha guardadas en el dispositivo
 - 📖 Al terminar te mostramos **qué significa la jerga en el Perú**
@@ -102,7 +102,7 @@ lib/
 │   ├── game_stats.dart            # rachas, victorias, distribución
 │   ├── daily_game.dart            # estado serializable de la partida
 │   └── app_settings.dart          # tema, sonido, háptica
-├── data/peruvian_words.dart      # diccionario local (84 jergas)
+├── data/peruvian_words.dart      # diccionario local (74 jergas)
 ├── services/
 │   ├── storage_service.dart       # SharedPreferences (async)
 │   ├── word_service.dart          # palabra del día (epoch + módulo)
@@ -200,7 +200,7 @@ Detalle completo en [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Extender el diccionario
 
-Las 84 jergas son **de uso real en Lima y la costa central**, tomadas de:
+Las 74 jergas son **de uso real en Lima y la costa central**, tomadas de:
 
 - **DiPerú**, diccionario de la Academia Peruana de la Lengua
 - **Peruanismos de Lima y la costa central** (108 términos)

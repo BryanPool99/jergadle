@@ -4,8 +4,8 @@ import 'package:jergadle/services/word_service.dart';
 
 void main() {
   group('Diccionario de jergas', () {
-    test('tiene al menos 80 palabras', () {
-      expect(peruvianWords.length, greaterThanOrEqualTo(80));
+    test('tiene al menos 74 palabras (diccionario solo peruanas)', () {
+      expect(peruvianWords.length, greaterThanOrEqualTo(74));
     });
 
     test('todas las palabras tienen 5 letras y definición', () {

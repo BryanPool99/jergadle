@@ -27,7 +27,7 @@ el proyecto se adhiere a [Semantic Versioning](https://semver.org/lang/es/).
   (`--no-web-resources-cdn`), sin depender de gstatic.com.
 - Documentacion del despliegue en el README, con las dos rutas para crear el
   proyecto de Vercel (CLI o dashboard) y donde encontrar cada secreto.
-- 84 jergas limeñas de 5 letras en el diccionario, todas de uso real en Lima
+- 74 jergas limeñas de 5 letras en el diccionario, todas de uso real en Lima
   y la costa central. Fuentes: DiPerú (Academia Peruana de la Lengua),
   "Peruanismos de Lima y la costa central" (108 términos), Wikilengua y
   Martha Hildebrandt.
