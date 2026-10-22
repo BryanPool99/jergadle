@@ -1,0 +1,140 @@
+name: Jergadle · CI y despliegue
+
+# Analiza y testea siempre; despliega a Vercel cuando la rama es main
+# (produccion) o develop (preview).
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+concurrency:
+  group: vercel-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  FLUTTER_VERSION: '3.47.7'
+
+jobs:
+  test:
+    name: Analizar y testear
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Dependencias
+        run: flutter pub get
+
+      - name: Analisis estatico
+        run: flutter analyze
+
+      - name: Tests
+        run: flutter test
+
+  deploy-production:
+    name: Desplegar en produccion
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    env:
+      # El token va por variable de entorno: si se pasa con --token queda
+      # visible en el listado de procesos del runner.
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar la CLI de Vercel
+        run: npm install --global vercel@latest
+
+      - name: Vincular el proyecto de Vercel
+        run: |
+          vercel pull --yes --non-interactive \
+            --environment=production
+
+      # Ejecuta el buildCommand de vercel.json (flutter build web) y deja el
+      # resultado listo en .vercel/output.
+      - name: Compilar
+        run: vercel build --prod --non-interactive
+
+      - name: Verificar la salida
+        run: |
+          test -f .vercel/output/static/index.html \
+            || (echo "::error::No se genero index.html" && exit 1)
+          test -s .vercel/output/static/main.dart.js \
+            || (echo "::error::main.dart.js vacio o ausente" && exit 1)
+          echo "Salida generada correctamente"
+
+      - name: Desplegar
+        run: vercel deploy --prebuilt --prod --non-interactive
+
+  deploy-preview:
+    name: Desplegar preview
+    needs: test
+    if: >-
+      (github.ref == 'refs/heads/develop' || github.event_name == 'pull_request')
+      && (github.event.pull_request.head.repo.full_name == github.repository
+          || github.event_name != 'pull_request')
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar la CLI de Vercel
+        run: npm install --global vercel@latest
+
+      - name: Vincular el proyecto de Vercel
+        run: |
+          vercel pull --yes --non-interactive \
+            --environment=preview
+
+      - name: Compilar
+        run: vercel build --non-interactive
+
+      - name: Verificar la salida
+        run: |
+          test -f .vercel/output/static/index.html \
+            || (echo "::error::No se genero index.html" && exit 1)
+          test -s .vercel/output/static/main.dart.js \
+            || (echo "::error::main.dart.js vacio o ausente" && exit 1)
+          echo "Salida generada correctamente"
+
+      - name: Desplegar
+        run: vercel deploy --prebuilt --non-interactive
