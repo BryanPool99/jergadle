@@ -1,6 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
+  "git": {
+    "deploymentEnabled": false
+  },
   "buildCommand": "flutter build web --release --no-web-resources-cdn",
   "outputDirectory": "build/web",
   "rewrites": [

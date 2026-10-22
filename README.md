@@ -218,26 +218,56 @@ gastar minutos de build de Vercel y aprovechar la caché del SDK de Flutter.
 
 ### 1. Crear el proyecto en Vercel
 
-1. Entra en [vercel.com/new](https://vercel.com/new) e importa el repositorio
+Hay dos rutas. **No es obligatorio importar el repositorio.**
+
+#### Ruta A — Crear el proyecto con la CLI (recomendada)
+
+```bash
+npm install --global vercel@latest
+vercel login
+vercel link --yes --project=jergadle    # crea el proyecto si no existe
+```
+
+`vercel link` genera `.vercel/project.json` con **los dos IDs que
+necesitas**:
+
+```json
+{ "orgId": "team_xxxxxxx", "projectId": "prj_xxxxxxx" }
+```
+
+Ventajas: sin builds rojos en el dashboard de Vercel, sin doble despliegue, y
+Vercel nunca ve tu código (sólo recibe el `.vercel/output` compilado).
+
+#### Ruta B — Importar el repositorio desde el dashboard
+
+1. Entra en [vercel.com/new](https://vercel.com/new) e importa
    `BryanPool99/jergadle`.
 2. **Framework Preset:** `Other`.
 3. **Build Command:** `flutter build web --release --no-web-resources-cdn`
 4. **Output Directory:** `build/web`
-5. Despliega una vez. Tu URL será `jergadle.vercel.app` (si el nombre está
-   libre; si no, `jergadle-xxx.vercel.app`, cámbiala en *Settings → Domains*).
+5. Despliega una vez.
 
-> Vercel no tiene Flutter en su imagen de build, pero **no pasa nada**: el
-> build real lo hace GitHub Actions y a Vercel solo se le sube el resultado.
+> Vercel no tiene Flutter en su imagen de build, así que **su propio build
+> va a fallar**. Es inofensivo: el deploy real lo hace GitHub Actions. Para
+> evitar que Vercel intente construir, `vercel.json` ya incluye
+> `"git": { "deploymentEnabled": false }`, que desactiva la integración
+> nativa de Git y con ello el doble despliegue.
 
-### 2. Secretos en GitHub
+En ambas rutas la URL será `jergadle.vercel.app` (si el nombre está libre; si
+no, `jergadle-xxx.vercel.app`, cámbiala en *Settings → Domains*).
 
-En *Settings → Secrets and variables → Actions* crea:
+### 2. Los tres secretos
 
 | Secreto | Dónde se saca |
 |---------|---------------|
-| `VERCEL_TOKEN` | Vercel → *Account Settings → Tokens* → *Create Token* (scope `vercel.com`, Full Access) |
-| `VERCEL_ORG_ID` | Vercel → *Settings → General → ID* (o el `orgId` de `.vercel/project.json`) |
-| `VERCEL_PROJECT_ID` | Vercel → *Settings → General → Project ID* (o el `projectId` de `.vercel/project.json`) |
+| `VERCEL_TOKEN` | [vercel.com/account/tokens](https://vercel.com/account/tokens) → *Create Token* (Full Access). También `vercel tokens add` |
+| `VERCEL_ORG_ID` | Proyecto → *Settings → General* → **Organization ID**. En cuenta personal es tu *User ID* (Account Settings → General) y empieza por `team_` |
+| `VERCEL_PROJECT_ID` | Proyecto → *Settings → General* → **Project ID** |
+
+Atajos: `vercel link` local te los deja en `.vercel/project.json`, y
+`vercel project ls` los muestra en la terminal.
+
+Créalos en GitHub en *Settings → Secrets and variables → Actions*.
 
 ### 3. Qué hace el workflow
 
@@ -262,8 +292,12 @@ vercel deploy --prebuilt --prod
 ```bash
 npm install --global vercel@latest
 vercel login
+export VERCEL_TOKEN=<tu token>
 bash scripts/deploy-web.sh --prod
 ```
+
+El script lee el token de la variable `VERCEL_TOKEN` (nunca del código) y
+hace `vercel link` la primera vez, si el proyecto aún no está vinculado.
 
 ### Detalles importantes de la configuración
 
@@ -280,6 +314,16 @@ bash scripts/deploy-web.sh --prod
   compile el motor con WebAssembly.
 - **`rewrites`**: todo cae en `index.html`. Vercel sirve primero los archivos
   del disco, así que los assets no se rompen.
+- **`"git": { "deploymentEnabled": false }`**: desactiva la integración nativa
+  de Git de Vercel. Sin esto, un mismo push dispararía **dos** despliegues
+  (el de Vercel y el de GitHub Actions) y el de Vercel fallaría, porque no
+  tiene Flutter en su imagen de build.
+- **`VERCEL_TOKEN` por variable de entorno**: si el token se pasa con
+  `--token=...` queda visible en el listado de procesos del runner. El
+  workflow lo exporta como variable de entorno en el job.
+- **`--non-interactive`**: en CI plano la CLI de Vercel no lo añade por
+  defecto (sólo lo hace si detecta que corre dentro de un agente), y sin él
+  puede quedarse esperando una confirmación.
 
 ### Service worker y PWA
 
